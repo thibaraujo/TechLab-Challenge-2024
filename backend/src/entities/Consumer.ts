@@ -1,25 +1,35 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+"use strict";
+import mongoose from "mongoose";
 
-@Entity('consumers')
+export interface IConsumer {
+  id: mongoose.Types.ObjectId; // unique
+  firstName?: string; 
+  lastName?: string;
+  document: string; // unique
+  birthDate?: Date; 
+  createdAt: Date;
+  updatedAt?: Date;
+  deletedAt?: Date; // soft delete -> default null
+}
+
 export class Consumer {
-  @PrimaryGeneratedColumn('uuid')
-  public id!: string
+  id: mongoose.Types.ObjectId;
+  firstName?: string;
+  lastName?: string;
+  document: string;
+  birthDate?: Date;
+  createdAt: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
 
-  @Column('character varying', { nullable: true })
-  public firstName!: string | null
-
-  @Column('character varying', { nullable: true })
-  public lastName!: string | null
-
-  @Column('character varying', { unique: true })
-  public document!: string
-
-  @Column('timestamp without time zone', { nullable: true })
-  public birthDate!: Date | null
-
-  @CreateDateColumn()
-  public createdAt!: Date
-
-  @UpdateDateColumn()
-  public updatedAt!: Date
+  constructor(consumer: IConsumer) {
+    this.id = consumer.id || new mongoose.Types.ObjectId();
+    this.firstName = consumer.firstName;
+    this.lastName = consumer.lastName;
+    this.document = consumer.document;
+    this.birthDate = consumer.birthDate;
+    this.createdAt = consumer.createdAt || new Date();
+    this.updatedAt = consumer.updatedAt;
+    this.deletedAt = consumer.deletedAt;
+  }
 }

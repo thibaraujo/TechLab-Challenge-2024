@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn, type Relation } from "typeorm";
-import { Conversation } from "./Conversation.js";
-import { User } from "./User.js";
+"use strict";
+import { Conversation, IConversation } from "./Conversation.js";
+import { IUser, User } from "./User.js";
+import mongoose from "mongoose";
 
 export enum ConversationMessageBy {
   Consumer = 'consumer',
@@ -8,26 +9,29 @@ export enum ConversationMessageBy {
   System = 'system',
 }
 
-@Entity('conversation_messages')
-@Index(() => ({ conversation: 1, createdAt: -1 }))
+export interface IConversationMessage {
+  id: mongoose.Types.ObjectId;
+  content: string;
+  by: ConversationMessageBy;
+  conversation: mongoose.Types.ObjectId | IConversation | Conversation;
+  user?: mongoose.Types.ObjectId | IUser | User;
+  createdAt: Date;
+}
+
 export class ConversationMessage {
-  @PrimaryGeneratedColumn('uuid')
-  public id!: string
-
-  @Column('text')
-  public content!: string
-
-  @Column('enum', { enum: ConversationMessageBy })
-  public by!: ConversationMessageBy
-
-  @ManyToOne(() => Conversation, { nullable: false })
-  @JoinColumn()
-  public conversation!: Relation<Conversation>
-
-  @ManyToOne(() => User)
-  @JoinColumn()
-  public user!: User | null
-
-  @CreateDateColumn()
-  public createdAt!: Date
+  id: mongoose.Types.ObjectId;
+  content: string;
+  by: ConversationMessageBy;
+  conversation: mongoose.Types.ObjectId | IConversation | Conversation;
+  user?: mongoose.Types.ObjectId | IUser | User;
+  createdAt: Date;
+  
+  constructor(conversationMessage: IConversationMessage) {
+    this.id = conversationMessage.id || new mongoose.Types.ObjectId();
+    this.content = conversationMessage.content;
+    this.by = conversationMessage.by;
+    this.conversation = conversationMessage.conversation;
+    this.user = conversationMessage.user;
+    this.createdAt = conversationMessage.createdAt || new Date();
+  }
 }

@@ -1,30 +1,32 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Consumer } from "./Consumer.js";
-import { ConversationMessage } from "./ConversationMessage.js";
-import { User } from "./User.js";
+"use strict";
+import { Consumer, IConsumer } from "./Consumer.js";
+import { IUser, User } from "./User.js";
+import mongoose from "mongoose";
 
-@Entity('conversations')
+export interface IConversation {
+  id: mongoose.Types.ObjectId;
+  subject: string;
+  consumer: mongoose.Types.ObjectId | IConsumer | Consumer;
+  user?: mongoose.Types.ObjectId | IUser | User;
+  createdAt: Date;
+  deletedAt?: Date;
+}
+
 export class Conversation {
-  @PrimaryGeneratedColumn('uuid')
-  public id!: string
+  id: mongoose.Types.ObjectId;
+  subject: string;
+  consumer: mongoose.Types.ObjectId | IConsumer | Consumer;
+  user?: mongoose.Types.ObjectId | IUser | User;
+  createdAt: Date;
+  deletedAt?: Date;
+  // todo: ver se há necessidade de relação dupla com ConversationMessage, por hora, relação sempre será na entidade de menor cardinalidade
 
-  @Column()
-  public subject!: string
-
-  @ManyToOne(() => Consumer, { nullable: false })
-  @JoinColumn()
-  public consumer!: Consumer
-
-  @ManyToOne(() => User)
-  @JoinColumn()
-  public user!: User | null
-
-  @OneToMany(() => ConversationMessage, message => message.conversation, { cascade: ['insert'] })
-  public messages!: ConversationMessage[]
-
-  @CreateDateColumn()
-  public createdAt!: Date
-
-  @DeleteDateColumn()
-  public deletedAt!: Date | null
+  constructor(conversation: IConversation) {
+    this.id = conversation.id || new mongoose.Types.ObjectId();
+    this.subject = conversation.subject;
+    this.consumer = conversation.consumer;
+    this.user = conversation.user;
+    this.createdAt = conversation.createdAt || new Date();
+    this.deletedAt = conversation.deletedAt;
+  }
 }
