@@ -1,8 +1,7 @@
-import { app } from "./app.js";
-import { APP_PORT } from "./constants/env.js";
-import { database } from "./services/database.js";
+"use strict"
 
-await database.initialize()
+import app from "./app.js";
+import { APP_PORT } from "./constants/env.js";
 
 app.listen(APP_PORT, () => {
   console.log(`server is running on port ${APP_PORT}`)

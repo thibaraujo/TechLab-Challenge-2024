@@ -1,26 +1,36 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { profiles } from "../constants/profiles.js";
+"use strict";
+import mongoose from "mongoose";
 
-@Entity('users')
+export enum Profile {
+  SUDO = "sudo",
+  STANDARD = "standard",
+}
+
+export interface IUser {
+  id: mongoose.Types.ObjectId;
+  username: string;
+  email: string;
+  password: string;
+  profile: Profile;
+  createdAt: Date;
+  deletedAt: Date;
+}
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  public id!: string
+  id: mongoose.Types.ObjectId;
+  username: string;
+  email: string;
+  password: string;
+  profile: Profile;
+  createdAt: Date;
+  deletedAt: Date;
 
-  @Column({ unique: true })
-  public username!: string
-
-  @Column({ unique: true })
-  public email!: string
-
-  @Column()
-  public password!: string
-
-  @Column('enum', { enum: Object.keys(profiles) })
-  public profile!: keyof typeof profiles
-
-  @CreateDateColumn()
-  public createdAt!: Date
-
-  @DeleteDateColumn()
-  public deletedAt!: Date | null
+  constructor(user: IUser) {
+    this.id = user.id || new mongoose.Types.ObjectId();
+    this.username = user.username;
+    this.email = user.email;
+    this.password = user.password;
+    this.profile = user.profile;
+    this.createdAt = user.createdAt || new Date();
+    this.deletedAt = user.deletedAt || null;
+  }
 }
