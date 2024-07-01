@@ -6,6 +6,7 @@ import { APP_NAME, SECRET } from "../constants/env.js";
 import { profiles } from "../constants/profiles.js";
 import { UserModel } from "../model/user.js";
 
+
 export class AuthenticationController {
   /**
    * POST /auth/sign-in

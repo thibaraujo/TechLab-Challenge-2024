@@ -1,39 +1,43 @@
 import mongoose, { Schema, model } from "mongoose";
-// INTERFACE
+import { IConsumer } from "../entities/Consumer.js";
+
 // SCHEMA
-const UserSchema = new Schema({
+const ConsumerSchema = new Schema({
     id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         default: () => new mongoose.Types.ObjectId(),
     },
-    username: {
+    firstName: {
+        type: String,
+        required: false
+    },
+    lastName: {
+        type: String,
+        required: false
+    },
+    document: {
         type: String,
         unique: true,
         required: true
     },
-    email: {
-        type: String,
-        unique: true,
-        required: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    profile: {
-        type: String,
-        enum: ["sudo", "standard"],
-        required: true
+    birthDate: {
+        type: Date,
+        required: false
     },
     createdAt: {
         type: Date,
-        default: Date.now,
+        default: new Date(),
         immutable: true
+    },
+    updatedAt: {
+        type: Date,
+        default: null
     },
     deletedAt: {
         type: Date,
         default: null
     }
 });
-export const UserModel = model("User", UserSchema);
+
+export const ConsumerModel = model<IConsumer>("Consumer", ConsumerSchema);
