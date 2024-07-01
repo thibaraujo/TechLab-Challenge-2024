@@ -3,63 +3,33 @@
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
-import database from "./services/database.js";
-import { AuthenticationController } from "./controllers/AuthenticationController.js";
-import { singleton } from "./tools/singleton.js";
-import { _catch } from "./middlewares/catch.js";
-import Express, { ErrorRequestHandler } from 'express'
-import { UserModel } from "./model/user.js";
+import routes from "./routes/index.js";
 
 // EXPRESS
-export const app = Express();
-// DATABASE
-function connectionMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-  database.connect()
-    .then(() => {
-      console.log("Database connected");
-      next();
-    })
-    .catch((error) => {
-      console.error("Error connecting to database: ", error);
-      next(error);
-    });
-}
-app.use(connectionMiddleware);
-app.use(cors());
-app.use(Express.json());
+const app: express.Express = express();
 
-console.log('routes loaded')
+// CORS
+const options: cors.CorsOptions = {
+  allowedHeaders: [
+    "Origin",
+    "Referer",
+    "User-Agent",
+    "X-KL-Ajax-Request",
+    "Authorization",
+    "X-Requested-With",
+    "Content-Type",
+    "Access-Control-Allow-Origin",
+    "Accept",
+  ],
+  credentials: true,
+  methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
+  origin: "*",
+};
 
-app.post('/login', function(req, res){
-  console.log('test');
-  res.end(); 
-});
+app.use(cors(options));
+app.use(express.json());
+app.disable("x-powered-by");
+app.use("/api", routes);
 
-app.use((req, res) => {
-  res.status(404).send()
-})
-
-app.use(((error, req, res) => {
-  console.error(error)
-
-  if (!(error instanceof Error)) return res.status(500).json({ message: 'Internal Server Error' })
-
-  res.status(500).json({ message: error.message })
-}) as ErrorRequestHandler)
-
-setTimeout(async () => {
-  database.connect()
-    .then(() => {
-      console.log("Database connected");
-    })
-    .catch((error) => {
-      console.error("Error connecting to database: ", error);;
-    });
-  const user = await UserModel.findOne({ email: "thiagobatistaaraujo06@gmail.com", deletedAt: null}).lean();
-  console.log(user)
-  if (!user) console.log('user not found')
-  else
-   console.log('user found')
-}, 100)
 
 export default app;

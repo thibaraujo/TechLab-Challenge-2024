@@ -8,6 +8,13 @@ const router = Router();
 const URL = "/auth/sign-in";
 
 // Cadastro de usuário
-router.post(URL, singleton(AuthenticationController).signIn);
+router.get(URL, async (req, res, next) => {
+    try {
+        console.log("POST /auth/sign-in");
+        res.status(200).json({ message: "POST /auth/sign-in" });
+    } catch (error) {
+        next(error);
+    }
+})
 
-export default router;
+export default router
