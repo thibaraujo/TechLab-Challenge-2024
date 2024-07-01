@@ -4,7 +4,7 @@ import { IUser, User } from "../entities/User.js";
 import jwt from 'jsonwebtoken'
 import { APP_NAME, SECRET } from "../constants/env.js";
 import { profiles } from "../constants/profiles.js";
-import { UserModel } from "../model/user.js";
+import { UserModel } from "../model/User.js";
 
 
 export class AuthenticationController {
