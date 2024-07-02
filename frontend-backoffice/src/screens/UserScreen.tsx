@@ -10,63 +10,58 @@ import { LoadingButton } from "@mui/lab";
 import SaveIcon from '@mui/icons-material/Save'
 
 export function UserScreen() {
-  const params = useParams()
-  const userId = params.userId
+  const params = useParams();
+  const userId = params.userId;
 
-  if (!userId) throw new Error('No userId provided')
+  if (!userId) throw new Error('No userId provided');
 
-  const accessToken = useAccessToken()
+  const accessToken = useAccessToken();
 
   const save = useMutation({
     mutationFn: async (user: Partial<IUser>) => {
-      console.log("userrrr", user)
-      const response = await api.put(`/users`, {}, {
+      const response = await api.put(`/users`, user, {
         headers: { Authorization: `Bearer ${accessToken}` },
         params: {
-          id: user._id, ...user 
+          id: user._id
         }
-      })
-
-      console.log(response)
-
-      console.log("passiou")
+      });
+      console.log(response);
     }
-  })
+  });
 
   const user = useQuery({
     queryKey: ['users', userId],
     queryFn: async () => {
       const response = await api.get(`/users/${userId}`, {
         headers: { Authorization: `Bearer ${accessToken}` }
-      })
-
-      return response.data as IUser
+      });
+      return response.data as IUser;
     }
-  })
+  });
 
-  const form = useForm<Partial<IUser>>({})
+  const form = useForm<Partial<IUser>>({});
 
   useEffect(() => {
     if (!user.data) return;
 
-    Object.entries(user.data).map(([key, value]) => {
-      // @ts-expect-error: I know exactly what I'm doing ok?
-      form.setValue(key, value)
-    })
-  }, [user.data])
+    Object.entries(user.data).forEach(([key, value]) => {
+      // @ts-ignore
+      form.setValue(key, value);
+    });
+  }, [user.data]);
 
-  if (!user.data) return 'Carregando...'
+  if (!user.data) return 'Carregando...';
 
   return (
     <Box>
       <Box>
-        <TextField label="Username" {...form.register('username')} onChange={(e) => {user.data.username = e.target.value}} fullWidth />
+        <TextField label="Username" {...form.register('username')} fullWidth />
       </Box>
       <Box>
         <TextField label="E-mail" {...form.register('email')} fullWidth />
       </Box>
       <Box>
-        <TextField label="Password" {...form.register('password')} type="password" fullWidth />
+        {/* <TextField label="Password" {...form.register('password')} type="password" fullWidth /> */}
       </Box>
       <Box>
         <Select label="Profile" {...form.register('profile')} fullWidth>
@@ -75,13 +70,15 @@ export function UserScreen() {
         </Select>
       </Box>
       <Box>
-      <LoadingButton loading={save.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SaveIcon />} onClick={
-        // @ts-expect-error: I know exactly what I'm doing ok?
-        form.handleSubmit(save.mutate)}
-      >
-        Salvar
-      </LoadingButton>
+        <LoadingButton
+          variant="contained"
+          style={{ padding: 16 }}
+          startIcon={<SaveIcon />}
+          onClick={form.handleSubmit((data) => save.mutate(data))}
+        >
+          Salvar
+        </LoadingButton>
       </Box>
     </Box>
-  )
+  );
 }
