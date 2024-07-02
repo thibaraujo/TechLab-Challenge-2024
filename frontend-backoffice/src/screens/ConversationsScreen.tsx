@@ -5,6 +5,7 @@ import { api } from "../services/api.js";
 import { ConversationItem } from "../components/ConversationItem.js";
 import { IConversation } from "../interfaces/IConversation.js";
 import { Outlet } from "react-router-dom";
+import { useMemo } from "react";
 
 export function ConversationsScreen() {
   // const user = useAuthenticatedUser()
@@ -17,9 +18,11 @@ export function ConversationsScreen() {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
 
+      console.log(response)
+
       return response.data as {
-        count: number
-        conversations: IConversation[]
+        total: number
+        results: IConversation[]
       }
     },
   })
@@ -28,14 +31,14 @@ export function ConversationsScreen() {
   //   return query.data?.count ?? NaN
   // }, [query.data?.count])
 
-  const conversations = query.data?.conversations ?? null
+  const conversations = query.data?.results ?? null
 
   return (
     <Grid container spacing={2} pl={0.1}>
       <Grid item xs={2}>
         <Grid container spacing={1}>
           {conversations?.map((conversation) => (
-            <Grid item key={`conversations:${conversation.id}`}>
+            <Grid item key={`conversations:${conversation._id}`}>
               <ConversationItem conversation={conversation}/>
             </Grid>
           ))}
