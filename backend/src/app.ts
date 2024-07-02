@@ -4,9 +4,25 @@ import cors from "cors";
 import "dotenv/config";
 import express from "express";
 import routes from "./routes/index.js";
+import database from "./services/database.js";
+
 
 // EXPRESS
 const app: express.Express = express();
+
+// DAtABASE
+function connectionMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  database.connect()
+    .then(() => {
+      console.log("Database connected");
+      next();
+    })
+    .catch((error) => {
+      console.error("Error connecting to database: ", error);
+      next(error);
+    });
+}
+app.use(connectionMiddleware);
 
 // CORS
 const options: cors.CorsOptions = {
