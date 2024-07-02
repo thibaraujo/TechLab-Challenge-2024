@@ -23,6 +23,13 @@ router.post(URL,
   })
 );
 
+// update user
+router.put(URL,
+  _catch((req, res, next) => {
+    singleton(UsersController).update(req, res, next).catch(next)
+  })
+);
+
 // list users
 router.get(URL, 
   _catch((req, res, next) => {

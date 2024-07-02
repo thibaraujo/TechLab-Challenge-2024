@@ -54,6 +54,30 @@ export class UsersController {
       }
     }
 
+    // Update user
+    public async update(req: Request, res: Response, next: NextFunction) {
+      try {
+        //* Busca o usuário no BD
+        const user = await UserModel.findById(req.query.id).exec();
+        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query.id}` });
+    
+        //* Atualiza o usuário
+        Object.assign(user, req.body);
+    
+        //* Salva o usuário no BD
+        await user.save();
+    
+        //* Retorna o usuário atualizado
+        return res.status(200).send(user);
+      } catch (error) {
+        console.error("ERRO ATUALIZANDO USUÁRIO: ", error);
+        return next(error);
+      }
+    }
+    
+
+
+
 //   /**
 //    * GET /users/:user-id
 //    */
