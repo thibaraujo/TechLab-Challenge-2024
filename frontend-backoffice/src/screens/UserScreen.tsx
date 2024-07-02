@@ -19,9 +19,17 @@ export function UserScreen() {
 
   const save = useMutation({
     mutationFn: async (user: Partial<IUser>) => {
-      await api.put(`/users`, { ...user, id: self.crypto.randomUUID() }, {
-        headers: { Authorization: `Bearer ${accessToken}` }
+      console.log("userrrr", user)
+      const response = await api.put(`/users`, {}, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: {
+          id: user._id, ...user 
+        }
       })
+
+      console.log(response)
+
+      console.log("passiou")
     }
   })
 
@@ -52,7 +60,7 @@ export function UserScreen() {
   return (
     <Box>
       <Box>
-        <TextField label="Username" {...form.register('username')} fullWidth />
+        <TextField label="Username" {...form.register('username')} onChange={(e) => {user.data.username = e.target.value}} fullWidth />
       </Box>
       <Box>
         <TextField label="E-mail" {...form.register('email')} fullWidth />

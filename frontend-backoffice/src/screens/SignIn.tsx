@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useForm } from 'react-hook-form'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext.js';
+import { useNavigate } from "react-router-dom";
 
 function Copyright(props: any) {
   return (
@@ -26,6 +27,13 @@ function Copyright(props: any) {
 }
 
 export default function SignIn() {
+
+  let navigate = useNavigate(); 
+  const routeChange = () =>{ 
+    let path = `/users`; 
+    navigate(path);
+  }
+
   const { signIn } = useAuthenticationContext()
   const handleSubmit = ({ username, password }: any) => {
     signIn({ username, password })
@@ -79,6 +87,7 @@ export default function SignIn() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            onClick={() => {routeChange}}
           >
             Sign In
           </Button>

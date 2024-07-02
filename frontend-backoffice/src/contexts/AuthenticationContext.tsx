@@ -28,9 +28,13 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
   const [accessToken, setAccessToken] = useState<string | null>(null)
   const signIn = useMutation({
     mutationFn: async ({ username, password }: IAuthenticationSignInPayload) => {
-      const response = await api.post('/auth/sign-in', { username, password })
-
-      setAccessToken(response.data.access_token)
+      const response = await api.post('/auth/sign-in', {}, {
+        auth: {
+          username: username,
+          password: password
+        }
+      })
+      setAccessToken(response.data.token)
     },
   })
 
@@ -38,20 +42,20 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
     if (!accessToken) return null
 
     const payload = decodeJsonWebToken(accessToken)
+    console.log(payload)
 
     if (!payload) return null
 
     if (typeof payload === 'string') return null
 
-    if (!payload.sub) return null
-
     return payload
   }, [accessToken])
 
   const userId = useMemo(() => {
-    if (!token?.sub) return null
+    console.log("tokennnnn", token)
+    if (!token?.user) return null
 
-    const userId = token.sub.replace('user:', '')
+    const userId = token.user
 
     return userId
   }, [token])
