@@ -2,8 +2,8 @@ import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entities/User.js";
-import { UserModel } from "../model/User.js";
 import { AuthUser } from "../interfaces/IAuthUser.js";
+import { UserModel } from "../model/user.js";
 
 const privateKey = process.env.SECRET ? process.env.SECRET : "SECRET_KEY";
 const EXP_TIME = 1;
