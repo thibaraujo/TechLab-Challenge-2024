@@ -7,7 +7,7 @@ export enum Profile {
 }
 
 export interface IUser {
-  id: mongoose.Types.ObjectId; // unique
+  _id: mongoose.Types.ObjectId; // unique
   username: string; // unique
   email: string; // unique
   password: string; // criptografar
@@ -17,7 +17,7 @@ export interface IUser {
   deletedAt?: Date; // user soft delete -> default null
 }
 export class User {
-  id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   username: string;
   email: string;
   password: string;
@@ -27,7 +27,7 @@ export class User {
   deletedAt?: Date;
 
   constructor(user: IUser) {
-    this.id = user.id || new mongoose.Types.ObjectId();
+    this._id = user._id || new mongoose.Types.ObjectId();
     this.username = user.username;
     this.email = user.email;
     this.password = user.password;

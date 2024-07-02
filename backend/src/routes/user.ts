@@ -30,10 +30,24 @@ router.put(URL,
   })
 );
 
+// patch user
+router.patch(URL,
+  _catch((req, res, next) => {
+    singleton(UsersController).patch(req, res, next).catch(next)
+  })
+);
+
 // list users
 router.get(URL, 
   _catch((req, res, next) => {
     singleton(UsersController).find(req, res, next).catch(next)
+  })
+);
+
+// delete user
+router.delete(URL,
+  _catch((req, res, next) => {
+    singleton(UsersController).delete(req, res, next).catch(next)
   })
 );
 

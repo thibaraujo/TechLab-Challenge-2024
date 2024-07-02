@@ -10,7 +10,7 @@ export enum ConversationMessageBy {
 }
 
 export interface IConversationMessage {
-  id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   content: string;
   by: ConversationMessageBy;
   conversation: mongoose.Types.ObjectId | IConversation | Conversation;
@@ -19,7 +19,7 @@ export interface IConversationMessage {
 }
 
 export class ConversationMessage {
-  id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   content: string;
   by: ConversationMessageBy;
   conversation: mongoose.Types.ObjectId | IConversation | Conversation;
@@ -27,7 +27,7 @@ export class ConversationMessage {
   createdAt: Date;
   
   constructor(conversationMessage: IConversationMessage) {
-    this.id = conversationMessage.id || new mongoose.Types.ObjectId();
+    this._id = conversationMessage._id || new mongoose.Types.ObjectId();
     this.content = conversationMessage.content;
     this.by = conversationMessage.by;
     this.conversation = conversationMessage.conversation;

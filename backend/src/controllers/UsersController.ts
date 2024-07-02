@@ -58,14 +58,8 @@ export class UsersController {
     public async update(req: Request, res: Response, next: NextFunction) {
       try {
         //* Busca o usuário no BD
-        const user = await UserModel.findById(req.query.id).exec();
-        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query.id}` });
-    
-        //* Atualiza o usuário
-        Object.assign(user, req.body);
-    
-        //* Salva o usuário no BD
-        await user.save();
+        const user = await UserModel.findOneAndUpdate({ _id: req.query.id, deletedAt: null }, { $set: req.body }, { new: true }).exec();
+        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query._id}` });
     
         //* Retorna o usuário atualizado
         return res.status(200).send(user);
@@ -74,16 +68,51 @@ export class UsersController {
         return next(error);
       }
     }
-    
 
+    // patch user
+    public async patch(req: Request, res: Response, next: NextFunction) {
+      try {
+        //* Busca o usuário no BD
+        const user = await UserModel.findById(req.query.id).exec();
+        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query._id}` });
+
+        //* Atualiza o usuário
+        Object.assign(user, req.body);
+        await user.save();
+
+        return res.status(200).send(user);
+
+        } catch (error) {
+            console.error("ERRO ATUALIZANDO USUÁRIO: ", error);
+            return next(error);
+        }
+    }
+
+    // delete
+    public async delete(req: Request, res: Response, next: NextFunction) {
+      try {
+        //* Busca o usuário no BD
+        const user = await UserModel.findById(req.query.id).exec();
+        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query._id}` });
+
+        //* Remove o usuário
+        await UserModel.findOneAndUpdate({ _id: req.query._id }, { deletedAt: new Date() }).exec();
+
+        //* Retorna o usuário removido
+        return res.status(200).send(user);
+        } catch (error) {
+        console.error("ERRO REMOVENDO USUÁRIO: ", error);
+        return next(error);
+        }
+    }
 
 
 //   /**
-//    * GET /users/:user-id
+//    * GET /users/:user-_id
 //    */
 //   public async findOne(req: Request<{ userId: string }>, res: Response) {
 //     const user = await this.repository.findOne({
-//       where: { id: req.params.userId }
+//       where: { _id: req.params.userId }
 //     })
     
 //     if (!user) return res.status(404).json({ message: `Not found User with ID ${req.params.userId}` })
@@ -98,16 +127,16 @@ export class UsersController {
 //     const user = await this.repository.save(req.body)
 
 //     res.status(201)
-//       .header('Location', `/users/${user.id}`)
+//       .header('Location', `/users/${user._id}`)
 //       .json(user)
 //   }
 
 //   /**
-//    * PATCH /users/:user-id
+//    * PATCH /users/:user-_id
 //    */
 //   public async update(req: Request<{ userId: string }>, res: Response) {
 //     const user = await this.repository.findOne({
-//       where: { id: req.params.userId }
+//       where: { _id: req.params.userId }
 //     })
 
 //     if (!user) return res.status(404).json({ message: `Not found User with ID ${req.params.userId}` })
@@ -120,11 +149,11 @@ export class UsersController {
 //   }
 
 //   /**
-//    * DELETE /users/:user-id
+//    * DELETE /users/:user-_id
 //    */
 //   public async delete(req: Request<{ userId: string }>, res: Response) {
 //     const user = await this.repository.findOne({
-//       where: { id: req.params.userId }
+//       where: { _id: req.params.userId }
 //     })
 
 //     if (!user) return res.status(404).json({ message: `Not found User with ID ${req.params.userId}` })

@@ -3,7 +3,7 @@ import { IConversation } from "../entities/Conversation.js";
 
 // SCHEMA
 const ConversationSchema = new Schema({
-    id: {
+    _id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         default: () => new mongoose.Types.ObjectId(),

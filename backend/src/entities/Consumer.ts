@@ -2,7 +2,7 @@
 import mongoose from "mongoose";
 
 export interface IConsumer {
-  id: mongoose.Types.ObjectId; // unique
+  _id: mongoose.Types.ObjectId; // unique
   firstName?: string; 
   lastName?: string;
   document: string; // unique
@@ -13,7 +13,7 @@ export interface IConsumer {
 }
 
 export class Consumer {
-  id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   firstName?: string;
   lastName?: string;
   document: string;
@@ -23,7 +23,7 @@ export class Consumer {
   deletedAt?: Date;
 
   constructor(consumer: IConsumer) {
-    this.id = consumer.id || new mongoose.Types.ObjectId();
+    this._id = consumer._id || new mongoose.Types.ObjectId();
     this.firstName = consumer.firstName;
     this.lastName = consumer.lastName;
     this.document = consumer.document;

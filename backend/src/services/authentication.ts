@@ -31,7 +31,7 @@ class Authentication {
 
   generateJWT = function (user: User, ip: string) {
     const info = {
-      user: user.id,
+      user: user._id,
       email: user.email,
       exp: Date.now() + (EXP_TIME * 3600000),
       ip
@@ -80,7 +80,7 @@ class Authentication {
       if (email) insensitiveEmail = email.toLowerCase();
       const respUser: User | undefined = (await UserModel.findOne({ email: insensitiveEmail, "status.deletedAt": null }).select("+password").exec())?.toObject();
 
-      if (!respUser || !password || !respUser.id)
+      if (!respUser || !password || !respUser._id)
         throw "Usuário ou senha inválidos.";
       else user = respUser;
 
@@ -89,7 +89,7 @@ class Authentication {
       const hash = await bcrypt.compare(password, user.password);
 
       if (hash) {
-        if (!user.id) throw "Usuário não possui _id.";
+        if (!user._id) throw "Usuário não possui _id.";
 
         return { ...user, token: this.generateJWT(user as User, ip) };
       }

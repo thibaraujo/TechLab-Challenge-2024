@@ -4,7 +4,7 @@ import { IUser, User } from "./User.js";
 import mongoose from "mongoose";
 
 export interface IConversation {
-  id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   subject: string;
   consumer: mongoose.Types.ObjectId | IConsumer | Consumer;
   user?: mongoose.Types.ObjectId | IUser | User;
@@ -13,7 +13,7 @@ export interface IConversation {
 }
 
 export class Conversation {
-  id: mongoose.Types.ObjectId;
+  _id: mongoose.Types.ObjectId;
   subject: string;
   consumer: mongoose.Types.ObjectId | IConsumer | Consumer;
   user?: mongoose.Types.ObjectId | IUser | User;
@@ -22,7 +22,7 @@ export class Conversation {
   // todo: ver se há necessidade de relação dupla com ConversationMessage, por hora, relação sempre será na entidade de menor cardinalidade
 
   constructor(conversation: IConversation) {
-    this.id = conversation.id || new mongoose.Types.ObjectId();
+    this._id = conversation._id || new mongoose.Types.ObjectId();
     this.subject = conversation.subject;
     this.consumer = conversation.consumer;
     this.user = conversation.user;

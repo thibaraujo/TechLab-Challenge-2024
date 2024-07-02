@@ -12,7 +12,7 @@ export const profiles = {
   },
   standard: {
     scopes: (user: User) => [
-      `users:${user.id}:*`,
+      `users:${user._id}:*`,
       'conversations:*',
     ],
     allowToCreate: ['sudo', 'standard']

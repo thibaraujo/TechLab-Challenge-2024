@@ -4,7 +4,7 @@ import { IUser } from "../entities/User.js";
 
 // SCHEMA
 const UserSchema = new Schema({
-    id: {
+    _id: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         default: () => new mongoose.Types.ObjectId(),
