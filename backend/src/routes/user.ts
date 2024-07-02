@@ -2,19 +2,33 @@
 import { NextFunction, Response, Router } from "express";
 import { AuthenticationController } from "../controllers/AuthenticationController.js";
 import { singleton } from "../tools/singleton.js";
+import { _catch } from "../middlewares/catch.js";
+import { UsersController } from "../controllers/UsersController.js";
+import { scope } from "../middlewares/scope.js";
 
 
 const router = Router();
-const URL = "/auth/sign-in";
+const URL = "/users";
 
-// Cadastro de usuário
-router.get(URL, async (req, res, next) => {
-    try {
-        console.log("POST /auth/sign-in");
-        res.status(200).json({ message: "POST /auth/sign-in" });
-    } catch (error) {
-        next(error);
-    }
-})
+// Authentication login
+router.post("/auth/sign-in", _catch((req, res, next) => {
+    singleton(AuthenticationController).signIn(req, res).catch(next)
+  })
+);
+
+// create user
+router.post(URL,
+  _catch((req, res, next) => {
+    singleton(UsersController).saveAdmin(req, res, next).catch(next)
+  })
+);
+
+// list users
+router.get(URL, 
+  _catch((req, res, next) => {
+    singleton(UsersController).find(req, res, next).catch(next)
+  })
+);
+
 
 export default router
