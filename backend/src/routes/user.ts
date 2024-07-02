@@ -19,7 +19,14 @@ router.post("/auth/sign-in", _catch((req, res, next) => {
 // create user
 router.post(URL,
   _catch((req, res, next) => {
-    singleton(UsersController).saveAdmin(req, res, next).catch(next)
+    singleton(UsersController).createAdmin(req, res, next).catch(next)
+  })
+);
+
+// register user
+router.post(URL + "/register",
+  _catch((req, res, next) => {
+    singleton(UsersController).register(req, res, next).catch(next)
   })
 );
 
@@ -41,6 +48,13 @@ router.patch(URL,
 router.get(URL, 
   _catch((req, res, next) => {
     singleton(UsersController).find(req, res, next).catch(next)
+  })
+);
+
+// get user
+router.get(URL + "/:id",
+  _catch((req, res, next) => {
+    singleton(UsersController).findOne(req, res, next).catch(next)
   })
 );
 

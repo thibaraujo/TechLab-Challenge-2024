@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { User } from "../entities/User.js";
+import { Profile, User } from "../entities/User.js";
 import { UserModel } from "../model/User.js";
 import bcrypt from "bcrypt";
 
@@ -34,7 +34,18 @@ export class UsersController {
         }
     }
 
-    public async saveAdmin(req: Request, res: Response, next: NextFunction) {
+    public async findOne(req: Request, res: Response, next: NextFunction) {
+      try {
+        const user = await UserModel.findOne({_id: req.params.id, deletedAt: null}).exec();
+        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query.id}` });
+        return res.status(200).send(user);
+      } catch (error) {
+        console.error("ERRO BUSCANDO USUÁRIO: ", error);
+        return next(error);
+      }
+    }
+
+    public async createAdmin(req: Request, res: Response, next: NextFunction) {
       try {
         //* Cria um novo usuário
         const user = new UserModel(req.body as User);
@@ -54,7 +65,25 @@ export class UsersController {
       }
     }
 
-    // Update user
+    public async register(req: Request, res: Response, next: NextFunction) {
+      try {
+        const user = new UserModel({...req.body, profile: Profile.Standard});
+        console.log(user);
+
+        if (!user.password) return res.status(400).send({ message: "Senha não informada." });
+        const passwordHash = await bcrypt.hash(user.password, 10);
+        user.password = passwordHash;
+          
+        await UserModel.create(user);
+
+        return res.status(201).send(user);
+      } catch (error) {
+        console.error("ERRO CRIANDO USUÁRIO: ", error);
+        return next(error);
+      }
+    }
+
+
     public async update(req: Request, res: Response, next: NextFunction) {
       try {
         //* Busca o usuário no BD
@@ -105,61 +134,4 @@ export class UsersController {
         return next(error);
         }
     }
-
-
-//   /**
-//    * GET /users/:user-_id
-//    */
-//   public async findOne(req: Request<{ userId: string }>, res: Response) {
-//     const user = await this.repository.findOne({
-//       where: { _id: req.params.userId }
-//     })
-    
-//     if (!user) return res.status(404).json({ message: `Not found User with ID ${req.params.userId}` })
-    
-//     return res.json(user)
-//   }
-
-//   /**
-//    * PUT /users
-//    */
-//   public async save(req: Request, res: Response) {
-//     const user = await this.repository.save(req.body)
-
-//     res.status(201)
-//       .header('Location', `/users/${user._id}`)
-//       .json(user)
-//   }
-
-//   /**
-//    * PATCH /users/:user-_id
-//    */
-//   public async update(req: Request<{ userId: string }>, res: Response) {
-//     const user = await this.repository.findOne({
-//       where: { _id: req.params.userId }
-//     })
-
-//     if (!user) return res.status(404).json({ message: `Not found User with ID ${req.params.userId}` })
-
-//     await this.repository.save(
-//       this.repository.merge(user, req.body)
-//     )
-
-//     res.json(user)
-//   }
-
-//   /**
-//    * DELETE /users/:user-_id
-//    */
-//   public async delete(req: Request<{ userId: string }>, res: Response) {
-//     const user = await this.repository.findOne({
-//       where: { _id: req.params.userId }
-//     })
-
-//     if (!user) return res.status(404).json({ message: `Not found User with ID ${req.params.userId}` })
-
-//     await this.repository.softRemove(user)
-
-//     res.json(user)
-//   }
 }
