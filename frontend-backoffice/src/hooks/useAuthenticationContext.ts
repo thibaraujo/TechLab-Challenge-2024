@@ -18,7 +18,6 @@ export function useAuthenticatedUser() {
 export function useHasScope(...oneOfScopes: [string, ...string[]]) {
   const { token } = useAuthenticationContext()
 
-  console.log(token)
   if (!token) throw new Error('Token not found')
 
   return useMemo(() => {

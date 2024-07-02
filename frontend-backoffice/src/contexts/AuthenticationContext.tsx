@@ -42,7 +42,6 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
     if (!accessToken) return null
 
     const payload = decodeJsonWebToken(accessToken)
-    console.log(payload)
 
     if (!payload) return null
 
@@ -52,7 +51,6 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
   }, [accessToken])
 
   const userId = useMemo(() => {
-    console.log("tokennnnn", token)
     if (!token?.user) return null
 
     const userId = token.user

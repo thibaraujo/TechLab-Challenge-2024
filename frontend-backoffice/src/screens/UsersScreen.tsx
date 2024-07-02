@@ -15,20 +15,20 @@ export function UsersScreen() {
       })
 
       return response.data as {
-        count: number
-        users: IUser[]
+        total: number
+        results: IUser[]
       }
     },
   })
 
-  const users = query.data?.users
+  const users = query.data?.results
 
   return (
     <>
       <Box>
         {users?.map(user => (
-          <Link to={`/users/${user.id}`}>
-            <Box key={`users:${user.id}`}>
+          <Link to={`/users/${user._id}`}>
+            <Box key={`users:${user._id}`}>
               <Typography>
                 {user.username}
               </Typography>
