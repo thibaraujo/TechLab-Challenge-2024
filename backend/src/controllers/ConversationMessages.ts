@@ -8,23 +8,16 @@ export class ConversationMessagesController {
     public async find(req: Request, res: Response, next: NextFunction) {
         try {
             //* Recebe os filtros de busca e paginação
-            let { page = 1, pageSize = 10 } = req.query;
             let conversationId  = req.query.id;
             //* Cria o objeto de busca
             const query: any = {
-                deletedAt: null
+
             };
 
             if (conversationId) query.conversation = conversationId;
-            
-
-            //* Converte a páginação para números e calcula o offset para a paginação
-            page = parseInt(page as string);
-            pageSize = parseInt(pageSize as string);
-            const skip = (page - 1) * pageSize;
 
             //* Busca os usuários no BD, utilizando os filtros e ordenando por data de criação
-            const conversationMessages = (await ConversationMessageModel.find(query).lean().skip(skip).limit(pageSize).sort({ _id: -1 }).exec());
+            const conversationMessages = (await ConversationMessageModel.find(query).lean().sort({ createdAt: 1 }).exec());
 
             //* Retorna a lista de usuários
             return res.status(200).send({ results: conversationMessages, total: await ConversationMessageModel.countDocuments(query) });
