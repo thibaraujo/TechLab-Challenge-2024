@@ -24,6 +24,9 @@ export function Chat() {
   const scrollRef = useRef<HTMLElement>(null)
 
   const { consumer, isLoading, accessToken, signIn } = useContext(AuthenticationContext)
+  console.log(consumer)
+  console.log(isLoading)
+  console.log(accessToken)
 
   const conversationQuery = useQuery({
     queryKey: ['conversations', consumer?.id],

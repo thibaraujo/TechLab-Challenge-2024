@@ -25,13 +25,16 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
 
     if (typeof token === 'string') return { token: null, consumerId: null }
 
-    if (!token.sub) return { token: null, consumerId: null }
+    // if (!token.sub) return { token: null, consumerId: null }
     
-    if (typeof token.sub !== 'string') return { token: null, consumerId: null }
+    // if (typeof token.sub !== 'string') return { token: null, consumerId: null }
 
-    if (!token.sub.startsWith('consumer:')) return { token: null, consumerId: null }
+    // if (!token.sub.startsWith('consumer:')) return { token: null, consumerId: null }
 
-    const consumerId = token.sub.replace('consumer:', '')
+    // const consumerId = token.sub.replace('consumer:', '')
+
+    const consumerId = token.consumer;
+    console.log({token, consumerId})
 
     return { token, consumerId }
   }, [accessToken])

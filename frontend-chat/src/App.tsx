@@ -8,7 +8,7 @@ import { defaultTheme } from './themes/default.js';
 import { CssBaseline } from '@mui/material';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthenticationProvider } from './contexts/AuthenticationProvider.jsx';
-import { Chat } from './components/Chat.js';
+import { Router } from './Router.js';
 
 const queryClient = new QueryClient()
 
@@ -18,7 +18,7 @@ export function App() {
       <ThemeProvider theme={defaultTheme}>
         <CssBaseline />
         <AuthenticationProvider>
-          <Chat />
+          <Router />
         </AuthenticationProvider>
       </ThemeProvider>
     </QueryClientProvider>
