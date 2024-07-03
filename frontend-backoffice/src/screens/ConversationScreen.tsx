@@ -151,15 +151,17 @@ export function ConversationScreen() {
               color: "#ffffff",
               marginLeft: message.by == "consumer" ? 0 : "auto"
             }}>
-              <Typography variant='body1'>{message.content} </Typography>
-              <span style={{ width: 5 }}/>
-              <Typography variant='overline'>{message.by == "system" ? " - Mensagem enviada pelo sistema" : " "}</Typography>
-              <Typography variant='overline'> - {new Date(message.createdAt).toLocaleString()}</Typography>
+              <Box>
+                <Typography variant='body1'>{message.content} </Typography>
+                <span style={{ width: 5 }}/>
+                <Typography variant='overline'>{message.by == "system" ? "Mensagem enviada pelo sistema" : " "}</Typography>
+                <Typography variant='overline'>{new Date(message.createdAt).toLocaleString()}</Typography>
+              </Box>
             </ListItem>
           ))}
         </List>
       </Box>
-      <Box mt='auto' px={4}>
+      <Box mt='auto' px={4} mb={1}>
         <Grid container spacing={2}>
           <Grid item sm={10}>
             <TextField {...form.register('content')} multiline fullWidth onSubmit={submit} onKeyUp={handleKeyPress}/>
