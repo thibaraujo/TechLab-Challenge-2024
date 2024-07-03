@@ -1,6 +1,6 @@
 import { Box, Grid, List, ListItem, Skeleton, TextField, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api.js";
 import { IConversation } from "../interfaces/IConversation.js";
 import { IConversationMessage } from "../interfaces/IConversationMessage.js";
@@ -23,6 +23,7 @@ export function ConversationScreen() {
   if (!params.conversationId) throw new Error('No conversationId provided')
 
   const accessToken = useAccessToken()
+  const navigate = useNavigate();
 
   const conversation = useQuery({
     queryKey: ['conversations', conversationId],
@@ -38,38 +39,54 @@ export function ConversationScreen() {
   const messagesQuery = useQuery({
     queryKey: ['conversations', conversationId, 'messages'],
     queryFn: async () => {
-      const response = await api.get(`/conversations/${conversationId}/messages`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
-      })
-
+      const response = await api.get(`/conversationMessages`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: {
+          id: conversationId
+        }
+      });
+  
+      console.log(response);
+  
       return response.data as {
-        count: number
-        messages: IConversationMessage[]
-      }
+        total: number; // todo: alterar aqui
+        results: IConversationMessage[]; 
+      };
     },
     refetchInterval: 20 * 1000
-  })
+  });
+  
 
   const send = useMutation({
     mutationFn: async (conversationMessageInput: IConversationMessageInput) => {
       await api.post(
-        `/conversations/${conversationId}/messages`,
-        { content: conversationMessageInput.content },
+        `/conversationMessages`,
+        {
+          by: 'user',
+          conversation: conversationId,
+          content: conversationMessageInput.content
+        },
         { headers: { Authorization: `Bearer ${accessToken}` } }
-      )
+      );
     },
     onSuccess: () => messagesQuery.refetch()
-  })
+  });
+  
 
   const close = useMutation({
     mutationFn: async () => {
-      await api.delete(
-        `/conversations/${conversationId}`,
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      )
+      await api.delete(`/conversations`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: { id: conversationId }
+      });
     },
-    onSuccess: () => messagesQuery.refetch()
-  })
+    onSuccess: () => {
+      messagesQuery.refetch();
+      navigate(-1); 
+      window.location.reload();
+    }
+  });
+  
 
   const form = useForm({
     defaultValues: { content: '' },
@@ -98,10 +115,10 @@ export function ConversationScreen() {
   }, [submit])
 
   const messages = useMemo(() => {
-    return (messagesQuery.data?.messages ?? []).slice().sort((a, b) => {
+    return (messagesQuery.data?.results ?? []).slice().sort((a, b) => {
       return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
     })
-  }, [messagesQuery.data?.messages])
+  }, [messagesQuery.data?.results])
 
   useEffect(() => {
     if (!scrollRef.current) return

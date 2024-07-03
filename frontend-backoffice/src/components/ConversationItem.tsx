@@ -18,7 +18,7 @@ export function ConversationItem({ conversation }: ConversationItemProps) {
   return (
     <Paper>
       <Typography variant="body1" gutterBottom>
-        <Link to={`/conversations/${conversation.id}`}>
+        <Link to={`/conversations/${conversation._id}`}>
           <ListItem disablePadding>
             <ListItemButton>
               <ListItemIcon>

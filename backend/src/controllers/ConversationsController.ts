@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { Conversation } from "../entities/Conversation.js";
 import bcrypt from "bcrypt";
 import { ConversationModel } from "../model/Conversation.js";
+import mongoose from "mongoose";
 
 export class ConversationsController {
 
@@ -51,6 +52,20 @@ export class ConversationsController {
         return res.status(201).send(conversation);
       } catch (error) {
         console.error("ERRO CRIANDO USUÁRIO: ", error);
+        return next(error);
+      }
+    }
+
+    public async delete(req: Request, res: Response, next: NextFunction) {
+      try {
+        console.log(req.query.id);
+        const conversation = await ConversationModel.findOne({_id: new mongoose.Types.ObjectId(req.query.id?.toString()), deletedAt: null}).exec();
+        if (!conversation) return res.status(404).send({ message: `Conversa não encontrado com ID ${req.query.id}` });
+        conversation.deletedAt = new Date();
+        await conversation.save();
+        return res.status(200).send(conversation);
+      } catch (error) {
+        console.error("ERRO BUSCANDO USUÁRIO: ", error);
         return next(error);
       }
     }

@@ -31,5 +31,12 @@ router.get(URL + "/:id",
   })
 );
 
+// delete conversation
+router.delete(URL,
+  _catch((req, res, next) => {
+    singleton(ConversationsController).delete(req, res, next).catch(next)
+  })
+);
+
 
 export default router
