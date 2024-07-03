@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { Profile, User } from "../entities/User.js";
-import { UserModel } from "../model/User.js";
 import bcrypt from "bcrypt";
+import { UserModel } from "../model/user.js";
 
 export class UsersController {
 

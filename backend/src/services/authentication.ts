@@ -2,8 +2,9 @@ import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entities/User.js";
-import { UserModel } from "../model/User.js";
 import { AuthUser } from "../interfaces/IAuthUser.js";
+import { UserModel } from "../model/user.js";
+
 
 const privateKey = process.env.SECRET ? process.env.SECRET : "SECRET_KEY";
 const EXP_TIME = 1;
@@ -130,6 +131,22 @@ class Authentication {
       }
     } catch (err) {
       throw "Erro na autenticação Bearer: ";
+    }
+  }
+
+  public userMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.headers.authorization) throw "Token de acesso não fornecido.";
+      if (!req.ip) throw "IP não fornecido.";
+      const user = await this.auth(req.headers.authorization, req.ip);
+
+      delete user.token;
+      req.user = user;
+
+      next();
+    } catch (err) {
+      console.error(err);
+      return res.status(401).send({ message: err });
     }
   }
 }

@@ -3,8 +3,8 @@ import { NextFunction, Response, Router } from "express";
 import { AuthenticationController } from "../controllers/AuthenticationController.js";
 import { singleton } from "../tools/singleton.js";
 import { _catch } from "../middlewares/catch.js";
-import { UsersController } from "../controllers/UsersController.js";
 import { scope } from "../middlewares/scope.js";
+import { UsersController } from "../controllers/UsersController.js";
 
 
 const router = Router();
