@@ -140,12 +140,21 @@ export function ConversationScreen() {
         <Typography variant='subtitle1'>{conversation.data.consumer.document}</Typography>
       </Box>
       <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef}>
-        <List>
+        <List style={{maxWidth: "99%"}}>
           {messages.map((message) => (
-            <ListItem key={`messages:${message.id}`}>
-              <Typography variant='body1'>{message.content}</Typography>
+            <ListItem key={`messages:${message.id}`} style={{
+              borderRadius: 5,
+              backgroundColor: message.by == "consumer" ? "#373e4e" : message.by == "system" ? "#555659" : "#3833bc",
+              marginTop: 5,
+              maxWidth: "75%",
+              width: "fit-content",
+              color: "#ffffff",
+              marginLeft: message.by == "consumer" ? 0 : "auto"
+            }}>
+              <Typography variant='body1'>{message.content} </Typography>
               <span style={{ width: 5 }}/>
-              <Typography variant='overline'>- {new Date(message.createdAt).toLocaleString()}</Typography>
+              <Typography variant='overline'>{message.by == "system" ? " - Mensagem enviada pelo sistema" : " "}</Typography>
+              <Typography variant='overline'> - {new Date(message.createdAt).toLocaleString()}</Typography>
             </ListItem>
           ))}
         </List>
