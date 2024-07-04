@@ -20,7 +20,7 @@ router.post("/auth/sign-in",
 
 // create conversationMessage
 router.post(URL,
-  authentication.userMiddleware,
+  // authentication.userMiddleware,
   _catch((req, res, next) => {
     singleton(ConversationMessagesController).createAdmin(req, res, next).catch(next)
   })

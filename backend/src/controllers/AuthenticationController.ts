@@ -24,4 +24,19 @@ export class AuthenticationController {
       return res.status(500).send(error);
     }
   }
+
+  public async signInConsumer(req: Request, res: Response) {
+    const document = req.body.document
+    if (!document) return res.status(400).send("Documento não solicitado.");
+
+    try {
+      const consumer = await authentication.authConsumer(document);
+      console.log(consumer);
+
+      return res.status(200).set("Content-Type", "application/json").send(consumer);
+    } catch (error) {
+      console.error("ERRO INICIANDO SESSÃO DO USUÁRIO : ", error);
+      return res.status(500).send(error);
+    }
+  }
 }
