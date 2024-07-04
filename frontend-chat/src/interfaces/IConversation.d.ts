@@ -1,7 +1,7 @@
 import { IConsumer } from "./IConsumer.js"
 
 export interface IConversation {
-  id: string
+  _id: string
   subject: string
   consumer: IConsumer
 }

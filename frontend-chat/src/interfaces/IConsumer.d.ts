@@ -1,5 +1,5 @@
 export interface IConsumer {
-  id: string;
+  _id: string;
   name: string;
   document: string;
 }

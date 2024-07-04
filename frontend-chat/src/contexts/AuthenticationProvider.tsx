@@ -14,11 +14,11 @@ export interface IAuthenticationContext {
 export const AuthenticationContext = createContext(null as unknown as IAuthenticationContext)
 
 export function AuthenticationProvider({ children }: PropsWithChildren) {
-  const [accessToken, setAccessToken] = useState(() => localStorage.getItem('session:access-token') ?? null)
-
+  const [accessToken, setAccessToken] = useState(() => null)
+  // const [accessToken, setAccessToken] = useState(() => localStorage.getItem('session:access-token') ?? null)
+ 
   const { consumerId } = useMemo(() => {
     if (!accessToken) return { token: null, consumerId: null }
-
     const token = decodeJsonWebToken(accessToken)
 
     if (!token) return { token: null, consumerId: null }
@@ -34,6 +34,7 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
     // const consumerId = token.sub.replace('consumer:', '')
 
     const consumerId = token.consumer;
+    console.log('consumerId', consumerId)
     console.log({token, consumerId})
 
     return { token, consumerId }
@@ -54,7 +55,7 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
   const signInMutation = useMutation({
     mutationFn: (document: string) => api.post('/consumers/sign-in', { document }),
     onSuccess: response => {
-      const { access_token } = response.data
+      const  access_token  = response.data.token;
 
       setAccessToken(access_token)
 
