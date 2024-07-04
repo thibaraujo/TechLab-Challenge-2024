@@ -34,7 +34,7 @@ export function ConversationsScreen() {
   const conversations = query.data?.results ?? null
 
   return (
-    <Grid container spacing={2} pl={0.1}>
+    <Grid container spacing={1} pl={1} mt={1}>
       <Grid item xs={2}>
         <Grid container spacing={1}>
           {conversations?.map((conversation) => (
