@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import SendIcon from '@mui/icons-material/Send';
 
 export interface TemporaryConversationMessage {
-  id: string
+  _id: string
   by: 'system' | 'consumer'
   content: string
   createdAt: string
@@ -26,57 +26,67 @@ export function Chat() {
   const { consumer, isLoading, accessToken, signIn } = useContext(AuthenticationContext)
 
   const conversationQuery = useQuery({
-    queryKey: ['conversations', consumer?.id],
+    queryKey: ['conversations', consumer?._id],
     queryFn: async () => {
-      const response = await api.get(`/consumers/${consumer!.id}/conversations`, {
+      if (!consumer) return null; 
+  
+      const response = await api.get('/conversations', {
+        params: { consumer: consumer._id },
         headers: { Authorization: `Bearer ${accessToken}` }
-      })
-
-      return (response.data.conversations[0] ?? null) as IConversation | null
+      });
+  
+      console.log('response', response.data)
+      return (response.data.results[0] ?? null) as IConversation | null;
     },
-    enabled: !!consumer,
-  })
+    enabled: !!consumer, 
+  });
+  
 
   const conversation = conversationQuery.data
 
   const messagesQuery = useQuery({
-    queryKey: ['conversations', conversation?.id, 'messages'],
+    queryKey: ['conversations', conversation?._id, 'messages'],
     queryFn: async () => {
-      const response = await api.get(`/conversations/${conversation!.id}/messages`, {
+      if (!conversation) return null; 
+  
+      const response = await api.get('/conversationMessages', {
+        params: { id: conversation._id },
         headers: { Authorization: `Bearer ${accessToken}` }
-      })
-
-      setTemporaryConversationMessages([])
-
+      });
+  
+      setTemporaryConversationMessages([]); // Limpa as mensagens temporárias, se necessário
+  
       return response.data as {
-        count: number
-        messages: IConversationMessage[]
-      }
+        total: number;
+        results: IConversationMessage[];
+      };
     },
-    enabled: !!conversation,
-    refetchInterval: 20 * 1000
-  })
+    enabled: !!conversation, // Habilita a execução da consulta somente se conversation estiver definido
+    refetchInterval: 20 * 1000 // Intervalo de refetch de 20 segundos, se necessário
+  });
+  
 
   const [temporaryConversationMessages, setTemporaryConversationMessages] = useState<TemporaryConversationMessage[]>([])
 
-  const pushTemporaryConversationMessage = useCallback((message: Omit<TemporaryConversationMessage, 'id' | 'createdAt'>) => {
+  const pushTemporaryConversationMessage = useCallback((message: Omit<TemporaryConversationMessage, '_id' | 'createdAt'>) => {
     setTemporaryConversationMessages((messages) => [
       ...messages,
-      { id: self.crypto.randomUUID(), createdAt: new Date().toISOString(), ...message }
+      { _id: self.crypto.randomUUID(), createdAt: new Date().toISOString(), ...message }
     ])
   }, [])
 
   const messages = useMemo(() => [
-    ...messagesQuery.data?.messages ?? [],
+    ...messagesQuery.data?.results ?? [],
     ...temporaryConversationMessages
   ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
-  [temporaryConversationMessages, messagesQuery.data?.messages])
+  [temporaryConversationMessages, messagesQuery.data?.results])
 
   const documentQuestionOpen = useRef(false)
   const subjectQuestionOpen = useRef(false)
 
   const send = useMutation({
     mutationFn: async (conversationMessageInput: IConversationMessageInput) => {
+      console.log(temporaryConversationMessages)
       if (documentQuestionOpen.current) {
         signIn(conversationMessageInput.content)
 
@@ -87,17 +97,18 @@ export function Chat() {
         return
       }
 
-      if (subjectQuestionOpen.current) {
+      if (subjectQuestionOpen.current && conversation) {
         pushTemporaryConversationMessage({ by: 'consumer', content: conversationMessageInput.content })
-
+        console.log('bearer', accessToken)
         await api.post(
-          `/consumers/${consumer!.id}/conversations`,
+          `/conversationMessages`,
           {
-            subject: conversationMessageInput.content,
-            messages: [...temporaryConversationMessages, { by: 'consumer', content: conversationMessageInput.content, createdAt: new Date().toISOString() }]
+            by: 'consumer',
+            conversation: conversation?._id,
+            content: conversationMessageInput.content
           },
           { headers: { Authorization: `Bearer ${accessToken}` } }
-        )
+        );
 
         subjectQuestionOpen.current = false
 
@@ -106,13 +117,41 @@ export function Chat() {
         return
       }
 
-      if (!conversation) return void 0
+      if (!conversation) {
+        console.log("nao tem")
+        const resp = await api.post(
+          `/conversations`,
+          {
+            consumer: consumer?._id,
+            subject: conversationMessageInput.content
+          },
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
 
-      else await api.post(
-        `/conversations/${conversation.id}/messages`,
-        { content: conversationMessageInput.content },
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      )
+        conversationQuery.refetch()
+
+        await api.post(
+          `/conversationMessages`,
+          {
+            by: 'consumer',
+            conversation: resp.data._id,
+            content: conversationMessageInput.content
+          },
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+      }
+      else {
+        console.log("tem")
+        await api.post(
+          `/conversationMessages`,
+          {
+            by: 'consumer',
+            conversation: conversation?._id,
+            content: conversationMessageInput.content
+          },
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+        );
+      }
 
       messagesQuery.refetch()
     },
@@ -160,7 +199,7 @@ export function Chat() {
   useEffect(() => {
     if (conversationQuery.isLoading) return;
 
-    if (conversation !== null) return;7
+    if (conversation !== null) return;
     
     pushTemporaryConversationMessage({ by: 'system', content: 'Qual o assunto do atendimento?' })
 
@@ -174,7 +213,7 @@ export function Chat() {
       <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef}>
         <List>
           {messages.map((message) => (
-            <ListItem key={`messages:${message.id}`}>
+            <ListItem key={`messages:${message._id}`}>
               <Typography variant='body1'>{message.content}</Typography>
               <span style={{ width: 5 }}/>
               <Typography variant='overline'>- {new Date(message.createdAt).toLocaleString()}</Typography>

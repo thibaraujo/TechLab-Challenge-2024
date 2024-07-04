@@ -12,5 +12,8 @@ router.use(conversationRouter);
 import conversationMessageRouter from './conversationMessage.js';
 router.use(conversationMessageRouter);
 
+import consumerRouter from './consumer.js';
+router.use(consumerRouter);
+
 export default router;
 

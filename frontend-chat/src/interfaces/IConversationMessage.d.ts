@@ -1,5 +1,5 @@
 export interface IConversationMessage {
-  id: string
+  _id: string
   content: string
   by: 'consumer' | 'system' | 'user'
   createdAt: string

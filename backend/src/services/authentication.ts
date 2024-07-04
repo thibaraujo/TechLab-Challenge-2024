@@ -3,6 +3,8 @@ import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { User } from "../entities/User.js";
 import { AuthUser } from "../interfaces/IAuthUser.js";
+import { Consumer } from "../entities/Consumer.js";
+import { ConsumerModel } from "../model/Consumer.js";
 import { UserModel } from "../model/user.js";
 
 
@@ -40,6 +42,15 @@ class Authentication {
     return jwt.sign(info, privateKey);
   };
 
+  generateJWTConsumer = function (consumer: Consumer, ip: string) {
+    const info = {
+      consumer: consumer._id,
+      exp: Date.now() + (EXP_TIME * 3600000),
+      ip
+    };
+    return jwt.sign(info, privateKey);
+  };
+
   updateJWT = function (info: IToken) {
     return jwt.sign(info, privateKey);
   };
@@ -67,6 +78,27 @@ class Authentication {
     else throw "Tipo de autenticação não reconhecido.";
   }
 
+  // Autenticação Consumer
+  async authConsumer(document: string): Promise<AuthUser> {
+    try {
+      let consumer: any
+      // adicionando insensitive case
+      let insensitiveDocument = "";
+      if (document) insensitiveDocument = document.toLowerCase();
+      const respConsumer: Consumer | undefined = (await ConsumerModel.findOne({ document: insensitiveDocument, deletedAt: null}).exec())?.toObject();
+
+      if (!respConsumer || !respConsumer._id)
+        throw "Consumidor não encontrado.";
+      else consumer = respConsumer;
+
+      console.log(consumer);
+      return { ...consumer, token: this.generateJWTConsumer(consumer as Consumer, "") };
+    } catch (err) {
+      console.error(err);
+      throw "Erro na autenticação Consumer: " + err;
+    }
+  }
+
   // Autenticação Basic
   private async basicAuth(token: string, ip: string): Promise<AuthUser> {
 
@@ -79,7 +111,7 @@ class Authentication {
       // adicionando insensitive case
       let insensitiveEmail = "";
       if (email) insensitiveEmail = email.toLowerCase();
-      const respUser: User | undefined = (await UserModel.findOne({ email: insensitiveEmail, "status.deletedAt": null }).select("+password").exec())?.toObject();
+      const respUser: User | undefined = (await UserModel.findOne({ email: insensitiveEmail, deletedAt: null }).select("+password").exec())?.toObject();
 
       if (!respUser || !password || !respUser._id)
         throw "Usuário ou senha inválidos.";

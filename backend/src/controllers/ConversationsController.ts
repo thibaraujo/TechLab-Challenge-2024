@@ -10,11 +10,13 @@ export class ConversationsController {
         try {
             //* Recebe os filtros de busca e paginação
             let { page = 1, pageSize = 10 } = req.query;
-
+            const { consumer } = req.query;
             //* Cria o objeto de busca
             const query: any = {
                 deletedAt: null
             };
+
+            if(consumer) query.consumer = consumer;
 
             //* Converte a páginação para números e calcula o offset para a paginação
             page = parseInt(page as string);
