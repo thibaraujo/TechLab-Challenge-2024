@@ -210,17 +210,33 @@ export function Chat() {
     <Box display='flex' flexDirection='column' height='100vh' py={2}>
       <Box>
       </Box>
-      <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef}>
-        <List>
+      <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef} display='flex' justifyContent='center'>
+        <List style={{ maxWidth: "90%", width: "100%" }}>
           {messages.map((message) => (
-            <ListItem key={`messages:${message._id}`}>
-              <Typography variant='body1'>{message.content}</Typography>
-              <span style={{ width: 5 }}/>
-              <Typography variant='overline'>- {new Date(message.createdAt).toLocaleString()}</Typography>
+            <ListItem 
+              key={`messages:${message._id}`} 
+              style={{
+                borderRadius: 5,
+                backgroundColor: message.by === "consumer" ? "#373e4e" : message.by === "system" ? "#555659" : "#3833bc",
+                marginTop: 5,
+                maxWidth: "75%",
+                width: "fit-content",
+                color: "#ffffff",
+                marginLeft: message.by === "consumer" ? "auto" : 0,
+                marginRight: message.by === "consumer" ? 0 : "auto"
+              }}
+            >
+              <Box>
+                <Typography variant='body1'>{message.content}</Typography>
+                <span style={{ width: 5 }} />
+                <Typography variant='overline'>{message.by === "system" ? "Mensagem enviada pelo sistema" : " "}</Typography>
+                <Typography variant='overline'>{new Date(message.createdAt).toLocaleString()}</Typography>
+              </Box>
             </ListItem>
           ))}
         </List>
       </Box>
+
       <Box mt='auto' px={4}>
         <Grid container spacing={2}>
           <Grid item sm={11}>
