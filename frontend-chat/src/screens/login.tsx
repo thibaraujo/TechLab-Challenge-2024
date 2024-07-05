@@ -2,8 +2,6 @@
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -28,8 +26,8 @@ function Copyright(props: any) {
 }
 
 export default function SignIn() {
+  let navigate = useNavigate();
 
-  let navigate = useNavigate(); 
   const routeChange = () =>{ 
     let path = `/chat`; 
     navigate(path);
@@ -56,7 +54,7 @@ export default function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Entrar
         </Typography>
         <Box component="form" onSubmit={form.handleSubmit(handleSubmit)} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -76,7 +74,20 @@ export default function SignIn() {
             sx={{ mt: 3, mb: 2 }}
             onClick={() => {routeChange}}
           >
-            Sign In
+            Entrar
+          </Button>
+          <Button
+            type="button"
+            fullWidth
+            variant="text"
+            sx={{ mt: 3, mb: 2 }}
+            onClick={() => {
+              let path = `/cadastro`; 
+              navigate(path);
+            }}
+            style={{color: "gray"}}
+          >
+            Ainda não tem uma conta? Cadastre-se
           </Button>
         </Box>
       </Box>

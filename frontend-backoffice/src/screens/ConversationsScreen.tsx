@@ -5,7 +5,6 @@ import { api } from "../services/api.js";
 import { ConversationItem } from "../components/ConversationItem.js";
 import { IConversation } from "../interfaces/IConversation.js";
 import { Outlet } from "react-router-dom";
-import { useMemo } from "react";
 
 export function ConversationsScreen() {
   // const user = useAuthenticatedUser()
