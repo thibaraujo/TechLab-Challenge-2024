@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { api } from "../services/api";
 import { useAccessToken } from "../hooks/useAuthenticationContext";
-import { IUser } from "../interfaces/IUser";
+import { IUser, IUserPayload } from "../interfaces/IUser";
 import { useEffect } from "react";
 import { LoadingButton } from "@mui/lab";
 import { Grid, Alert, AlertTitle } from "@mui/material";
@@ -24,7 +24,8 @@ export function UserScreen() {
 
   const save = useMutation({
     mutationFn: async (user: Partial<IUser>) => {
-      const response = await api.put(`/users`, user, {
+      const userPayload = { username: user.username, email: user.email, profile: user.profile } as IUserPayload
+      const response = await api.put(`/users`, userPayload, {
         headers: { Authorization: `Bearer ${accessToken}` },
         params: {
           id: user._id

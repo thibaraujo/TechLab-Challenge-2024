@@ -1,6 +1,7 @@
 "use strict";
 
 import { celebrate, Segments, Joi } from "celebrate";
+import user from "./user.js";
 
 export default {
     get() {
@@ -8,6 +9,7 @@ export default {
             [Segments.QUERY]: {
                 id: Joi.string().length(24).hex(),
                 consumer: Joi.string().length(24).hex(),
+                user: Joi.string().length(24).hex(),
             },
         });
     },

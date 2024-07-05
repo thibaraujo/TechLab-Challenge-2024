@@ -31,7 +31,7 @@ export default {
             [Segments.BODY]: {
                 username: Joi.string(),
                 email: Joi.string().email(),
-                profile: Joi.string().valid(...Object.values(Profile)),
+                profile: Joi.string()
             },
         });
     },
