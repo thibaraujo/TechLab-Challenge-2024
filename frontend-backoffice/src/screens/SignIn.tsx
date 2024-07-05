@@ -55,7 +55,7 @@ export default function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          Entrar
         </Typography>
         <Box component="form" onSubmit={form.handleSubmit(handleSubmit)} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -89,7 +89,7 @@ export default function SignIn() {
             sx={{ mt: 3, mb: 2 }}
             onClick={() => {routeChange}}
           >
-            Sign In
+            Entrar
           </Button>
         </Box>
       </Box>

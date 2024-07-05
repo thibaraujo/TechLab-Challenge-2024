@@ -2,6 +2,7 @@ import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, Lis
 import { Link, Outlet } from "react-router-dom";
 import { useHasScope } from "../hooks/useAuthenticationContext.js";
 import PeopleIcon from '@mui/icons-material/People'
+import PersonAdd from '@mui/icons-material/PersonAdd'
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 
 const drawerWidth = 240;
@@ -42,6 +43,18 @@ export function Dashboard() {
                         <PeopleIcon />
                       </ListItemIcon>
                       <ListItemText primary='Usuários' />
+                    </ListItemButton>
+                  </ListItem>
+                </Link>
+              )}
+              {useHasScope('users:*', 'users:read') && (
+                <Link to='/new_user'>
+                  <ListItem disablePadding>
+                    <ListItemButton>
+                      <ListItemIcon>
+                        <PersonAdd />
+                      </ListItemIcon>
+                      <ListItemText primary='Criar Usuário' />
                     </ListItemButton>
                   </ListItem>
                 </Link>

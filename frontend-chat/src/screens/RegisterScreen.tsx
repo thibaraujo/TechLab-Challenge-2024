@@ -24,12 +24,12 @@ export function RegisterScreen() {
 
       setStatusAlert(response.status);
       setAlert(true);
+      if(statusAlert == 201) {
+        let path = `/`; 
+        navigate(path);
+      }
       setTimeout(() => {
         setAlert(false);
-        if(statusAlert == 200) {
-            let path = `/`; 
-            navigate(path);
-        }
       }, 3000);
     }
   });
@@ -81,7 +81,7 @@ export function RegisterScreen() {
         
       </Grid>
       <Grid item sm={10}>
-        {statusAlert == 200 ? 
+        {statusAlert == 201 ? 
           alert && 
           <Alert severity="success">
             <AlertTitle>Sucesso</AlertTitle>
