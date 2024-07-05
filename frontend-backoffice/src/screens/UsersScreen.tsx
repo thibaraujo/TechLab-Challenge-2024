@@ -6,7 +6,8 @@ import { IUser } from "../interfaces/IUser.js"
 import { Grid } from "@mui/material";
 
 export function UsersScreen() {
-  const accessToken = useAccessToken()
+  const accessToken = useAccessToken();
+
   const query = useQuery({
     queryKey: ['users'],
     queryFn: async () => {
@@ -19,13 +20,13 @@ export function UsersScreen() {
         results: IUser[]
       }
     },
-  })
+  });  
 
   const users = query.data?.results
 
   return (
-    <Grid container spacing={1} pl={1} mt={1} width={"25%"}>
-      <Grid item xs={2}>
+    <Grid container spacing={1} pl={1} mt={10} ml={1} style={{maxWidth: "99vw", maxHeight: "99vh", overflow: "auto"}}>
+      <Grid item>
         <Grid container spacing={1}>
           {users?.map((user) => (
             <Grid item key={`users:${user._id}`}>
