@@ -1,69 +1,73 @@
 "use strict";
-import { NextFunction, Response, Router } from "express";
+import { Router } from "express";
 import { AuthenticationController } from "../controllers/AuthenticationController.js";
 import { singleton } from "../tools/singleton.js";
 import { _catch } from "../middlewares/catch.js";
-import { scope } from "../middlewares/scope.js";
 import { UsersController } from "../controllers/UsersController.js";
+import authentication from "../services/authentication.js";
+import validator from "../validator/user.js";
 
 
 const router = Router();
 const URL = "/users";
 
-// Authentication login
-router.post("/auth/sign-in", _catch((req, res, next) => {
+router.post("/auth/sign-in", validator.login(), _catch((req, res, next) => {
     singleton(AuthenticationController).signIn(req, res).catch(next)
   })
 );
 
-// create user
 router.post(URL,
+  validator.post(),
+  authentication.sudoMiddleware,
   _catch((req, res, next) => {
     singleton(UsersController).createAdmin(req, res, next).catch(next)
   })
 );
 
-// register user
-router.post(URL + "/register",
-  _catch((req, res, next) => {
-    singleton(UsersController).register(req, res, next).catch(next)
-  })
-);
+// router.post(URL + "/register",
+//   _catch((req, res, next) => {
+//     singleton(UsersController).register(req, res, next).catch(next)
+//   })
+// );
 
-// update user
 router.put(URL,
+  validator.put(),
+  authentication.standardMiddleware,
   _catch((req, res, next) => {
     singleton(UsersController).update(req, res, next).catch(next)
   })
 );
 
-// patch user
 router.patch(URL,
+  validator.put(),
+  authentication.standardMiddleware,
   _catch((req, res, next) => {
     singleton(UsersController).patch(req, res, next).catch(next)
   })
 );
 
-// list users
 router.get(URL, 
+  validator.get(),
+  authentication.sudoMiddleware,
   _catch((req, res, next) => {
     singleton(UsersController).find(req, res, next).catch(next)
   })
 );
 
-// get user
 router.get(URL + "/:id",
+  validator.get(),
+  authentication.standardMiddleware,
   _catch((req, res, next) => {
     singleton(UsersController).findOne(req, res, next).catch(next)
   })
 );
 
-// delete user
 router.delete(URL,
+  validator.delete(),
+  authentication.sudoMiddleware,
   _catch((req, res, next) => {
     singleton(UsersController).delete(req, res, next).catch(next)
   })
 );
-
 
 export default router
