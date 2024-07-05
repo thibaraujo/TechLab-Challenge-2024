@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import Switch, { SwitchProps } from '@mui/material/Switch';
+import Switch from '@mui/material/Switch';
 import { styled } from '@mui/material/styles';
 
 const darkTheme = createTheme({
@@ -21,6 +21,29 @@ const darkTheme = createTheme({
             
         },
     },
+    components: {
+      MuiListItemText: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff"
+          }
+        }
+      },
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            color: "#ffffff"
+          }
+        }
+      },
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#373e4e"
+          }
+        }
+      }
+    }
 })
 
 const lightTheme = createTheme({
@@ -35,11 +58,27 @@ const lightTheme = createTheme({
             contrastText: "#ffffff"
         },
         background: {
-            default: "#ffffff"
+            default: "#efefef"
         },
         text: {
             primary: "#202735"
         }
+    },
+    components: {
+      MuiListItemText: {
+        styleOverrides: {
+          root: {
+            color: "#3833bc"
+          }
+        }
+      },
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            color: "#3833bc"
+          }
+        }
+      },
     }
 })
 

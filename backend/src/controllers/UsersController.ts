@@ -101,13 +101,13 @@ export class UsersController {
         const user = await UserModel.findById(req.query.id).exec();
         if (!user) return res.status(404).send({ message: `Usuário não encontrado: ${req.query._id}` });
 
-        await UserModel.findOneAndUpdate({ _id: req.query._id }, { deletedAt: new Date() }).exec();
+        const deleted = await UserModel.findOneAndUpdate({ _id: user._id }, {$set: {deletedAt: new Date()}}, {new: true});
 
         //* Retorna o usuário removido
-        return res.status(200).send(user);
+        return res.status(200).send(deleted);
         } catch (error) {
-        console.error("ERRO REMOVENDO USUÁRIO: ", error);
-        return next(error);
+          console.error("ERRO REMOVENDO USUÁRIO: ", error);
+          return next(error);
         }
     }
 
