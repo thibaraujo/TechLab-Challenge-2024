@@ -15,10 +15,9 @@ export default {
     post() {
         return celebrate({
             [Segments.BODY]: {
-                username: Joi.string().required(),
-                email: Joi.string().email().required(),
-                password: Joi.string().required(),
-                profile: Joi.string().valid(...Object.values(Profile)).required(),
+                firstName: Joi.string(),
+                lastName: Joi.string(),
+                document: Joi.string().required(),
             },
         });
     },

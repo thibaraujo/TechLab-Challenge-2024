@@ -39,7 +39,7 @@ router.get(URL + "/user",
 );
 
 // list consumer conversations
-router.get(URL + "/consumer", 
+router.get(URL + "/consumers", 
   validator.get(),
   authenticationConsumer.consumerMiddleware,
   _catch((req, res, next) => {

@@ -30,7 +30,7 @@ export function Chat() {
     queryFn: async () => {
       if (!consumer) return null; 
   
-      const response = await api.get('/conversations', {
+      const response = await api.get('/conversations/consumers', {
         params: { consumer: consumer._id },
         headers: { Authorization: `Bearer ${accessToken}` }
       });
