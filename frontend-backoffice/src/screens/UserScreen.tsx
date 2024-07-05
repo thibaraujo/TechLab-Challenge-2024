@@ -1,7 +1,7 @@
-import { Box, MenuItem, Select, TextField } from "@mui/material";
+import { Typography, MenuItem, Select, TextField } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api";
 import { useAccessToken } from "../hooks/useAuthenticationContext";
 import { IUser, IUserPayload } from "../interfaces/IUser";
@@ -16,7 +16,9 @@ export function UserScreen() {
   const userId = params.userId;
 
   const [statusAlert, setStatusAlert] = useState(-1);
-  const [alert, setAlert] = useState(true);  
+  const [alert, setAlert] = useState(true); 
+  
+  let navigate = useNavigate();
 
   if (!userId) throw new Error('No userId provided');
 
@@ -37,6 +39,8 @@ export function UserScreen() {
       setTimeout(() => {
         setAlert(false);
       }, 3000);
+
+      if(response.status == 200) navigate("/users")
     }
   });
 
@@ -64,7 +68,12 @@ export function UserScreen() {
   if (!user.data) return 'Carregando...';
 
   return (
-    <Grid container spacing={1} pl={10} mt={10} xs={10} direction="row" justifyItems="flex-start" alignItems="flex-start">
+    <Grid container spacing={1} ml={"20vh"} mt={10} xs={10} maxWidth={"100%"} direction="row" justifyItems="flex-start" alignItems="flex-start">
+      <Grid item sm={10}>
+        <Typography component="h1" variant="h5">
+        Editar Usuário
+        </Typography>
+      </Grid>
       <Grid item sm={10}>
         <TextField label="Username" {...form.register('username')} fullWidth />
       </Grid>
