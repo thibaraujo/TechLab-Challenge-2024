@@ -1,5 +1,5 @@
 import { Typography, TextField } from "@mui/material";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { api } from "../services/api";
 import { IConsumer } from "../interfaces/IConsumer";

@@ -1,6 +1,6 @@
-import { Button, ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography } from "@mui/material";
+import { ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography } from "@mui/material";
 import { IConversation } from "../interfaces/IConversation.js";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { useMemo } from "react";
 

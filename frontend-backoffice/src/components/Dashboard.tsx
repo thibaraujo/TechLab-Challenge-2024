@@ -4,15 +4,13 @@ import { useHasScope } from "../hooks/useAuthenticationContext.js";
 import PeopleIcon from '@mui/icons-material/People';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
-import { useAccessToken } from "../hooks/useAuthenticationContext.js";
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import { useState } from "react";
-import Switch, { SwitchProps } from '@mui/material/Switch';
+import Switch from '@mui/material/Switch';
 
 const drawerWidth = 240;
 
 export function Dashboard() {
-  const accessToken = useAccessToken()
   const [available, setAvailable] = useState(true); 
 
   let navigate = useNavigate();
