@@ -1,11 +1,10 @@
 import bcrypt from "bcrypt";
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { User } from "../entities/User.js";
+import { Profile, User } from "../entities/User.js";
 import { AuthUser } from "../interfaces/IAuthUser.js";
-import { Consumer } from "../entities/Consumer.js";
-import { ConsumerModel } from "../model/Consumer.js";
 import { UserModel } from "../model/user.js";
+import { CustomRequest } from "../interfaces/ICustomRequest.js";
 
 
 const privateKey = process.env.SECRET ? process.env.SECRET : "SECRET_KEY";
@@ -16,10 +15,6 @@ interface IToken {
   iat?: number;
   user: User;
   ip: string;
-}
-
-export interface CustomRequest extends Request {
-  user?: User;
 }
 
 class Authentication {
@@ -36,15 +31,6 @@ class Authentication {
     const info = {
       user: user._id,
       email: user.email,
-      exp: Date.now() + (EXP_TIME * 3600000),
-      ip
-    };
-    return jwt.sign(info, privateKey);
-  };
-
-  generateJWTConsumer = function (consumer: Consumer, ip: string) {
-    const info = {
-      consumer: consumer._id,
       exp: Date.now() + (EXP_TIME * 3600000),
       ip
     };
@@ -78,32 +64,8 @@ class Authentication {
     else throw "Tipo de autenticação não reconhecido.";
   }
 
-  // Autenticação Consumer
-  async authConsumer(document: string): Promise<AuthUser> {
-    try {
-      let consumer: any
-      // adicionando insensitive case
-      let insensitiveDocument = "";
-      if (document) insensitiveDocument = document.toLowerCase();
-      const respConsumer: Consumer | undefined = (await ConsumerModel.findOne({ document: insensitiveDocument, deletedAt: null}).exec())?.toObject();
-
-      if (!respConsumer || !respConsumer._id)
-        throw "Consumidor não encontrado.";
-      else consumer = respConsumer;
-
-      console.log(consumer);
-      return { ...consumer, token: this.generateJWTConsumer(consumer as Consumer, "") };
-    } catch (err) {
-      console.error(err);
-      throw "Erro na autenticação Consumer: " + err;
-    }
-  }
-
   // Autenticação Basic
   private async basicAuth(token: string, ip: string): Promise<AuthUser> {
-
-    console.log("AUTENTICANDO USUÁRIO: BASIC");
-
     const [email, password] = token ? Buffer.from(token, "base64").toString().split(":") : [null, null];
     try {
       let user: AuthUser;
@@ -111,6 +73,7 @@ class Authentication {
       // adicionando insensitive case
       let insensitiveEmail = "";
       if (email) insensitiveEmail = email.toLowerCase();
+
       const respUser: User | undefined = (await UserModel.findOne({ email: insensitiveEmail, deletedAt: null }).select("+password").exec())?.toObject();
 
       if (!respUser || !password || !respUser._id)
@@ -134,12 +97,7 @@ class Authentication {
     }
   }
 
-
-  // Autenticação Bearer
   private async bearerAuth(token: string, ip: string) {
-
-    console.log("AUTENTICANDO USUÁRIO: BEARER");
-
     try {
 
       // Verifica o token
@@ -152,7 +110,7 @@ class Authentication {
 
         // Busca o usuário no BD
         let user: AuthUser;
-        const respUser: User | undefined = (await UserModel.findOne({ _id: payload.user, "status.deletedAt": null }))?.toObject();
+        const respUser: User | undefined = (await UserModel.findOne({ _id: payload.user, deletedAt: null }))?.toObject();
 
         if (!respUser) throw "Usuário ou senha inválidos.";
         else user = respUser;
@@ -166,7 +124,7 @@ class Authentication {
     }
   }
 
-  public userMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
+  public standardMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.headers.authorization) throw "Token de acesso não fornecido.";
       if (!req.ip) throw "IP não fornecido.";
@@ -180,7 +138,19 @@ class Authentication {
       console.error(err);
       return res.status(401).send({ message: err });
     }
-  }
+  };
+
+  public sudoMiddleware = async (req: CustomRequest, res: Response, next: NextFunction) => {
+    await this.standardMiddleware(req, res, () => { return; });
+    try {
+      if (!(req.user?.profile == Profile.Sudo)) throw "Usuário não tem permissão para essa ação. Necessário perfil Sudo.";
+
+      next();
+    } catch (err) {
+      console.error(err);
+      return res.status(401).send(err);
+    }
+  };
 }
 
 
