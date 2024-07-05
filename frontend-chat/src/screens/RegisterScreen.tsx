@@ -19,15 +19,15 @@ export function RegisterScreen() {
   const save = useMutation({
     mutationFn: async (consumer: Partial<IConsumer>) => {
       const response = await api.post(`/consumers`, consumer);
-      console.log(response);
-      let navigate = useNavigate(); 
 
       setStatusAlert(response.status);
       setAlert(true);
-      if(statusAlert == 201) {
+
+      if(response.status == 201) {
         let path = `/`; 
         navigate(path);
       }
+
       setTimeout(() => {
         setAlert(false);
       }, 3000);
