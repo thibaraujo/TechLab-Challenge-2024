@@ -5,6 +5,7 @@ import { UsersScreen } from "./screens/UsersScreen.js";
 import { ConversationScreen } from "./screens/ConversationScreen.js";
 import { UserScreen } from "./screens/UserScreen.js";
 import { NewUserScreen } from "./screens/NewUserScreen.js";
+import { MyConversationsScreen } from "./screens/MyConversationsScreen.js";
 
 const router = createBrowserRouter([
   {
@@ -22,8 +23,19 @@ const router = createBrowserRouter([
           }
         ]
       },
+      {
+        path: '/my_conversations',
+        element: <MyConversationsScreen />,
+        children: [
+          {
+            path: '/my_conversations/:conversationId',
+            element: <ConversationScreen />
+          }
+        ]
+      },
       { path: '/users', element: <UsersScreen /> },
       { path: '/users/:userId', element: <UserScreen /> },
+      { path: '/profile/:userId', element: <UserScreen /> },
       { path: '/new_user', element: <NewUserScreen /> },
       
     ]
