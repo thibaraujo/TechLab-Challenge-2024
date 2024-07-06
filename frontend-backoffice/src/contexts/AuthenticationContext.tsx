@@ -25,7 +25,8 @@ export interface IAuthenticationContext {
 export const AuthenticationContext = createContext(null as unknown as IAuthenticationContext)
 
 export function AuthenticationProvider({ children }: PropsWithChildren) {
-  const [accessToken, setAccessToken] = useState<string | null>(null)
+  const [accessToken, setAccessToken] = useState(() => localStorage.getItem('session:access-token') ?? null)
+
   const signIn = useMutation({
     mutationFn: async ({ username, password }: IAuthenticationSignInPayload) => {
       const response = await api.post('/auth/sign-in', {}, {
@@ -35,6 +36,7 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
         }
       })
       setAccessToken(response.data.token)
+      localStorage.setItem('session:access-token', response.data.token)
     },
   })
 
