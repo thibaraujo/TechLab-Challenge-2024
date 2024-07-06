@@ -1,14 +1,17 @@
 services:
   database:
-    image: postgres:16
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
     ports:
-      - 5432
+      - "27017:27017"
     networks:
       - techlab_net
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=supersecret
-      - POSTGRES_DB=techlab
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root
+    #   MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongodb_data:/data/db
 
   frontend_backoffice:
     build:
@@ -35,12 +38,13 @@ services:
       dockerfile: backend.Dockerfile
     links:
       - database
-    command: yarn workspace techlab-challenge-2024-3q-backend typeorm migration:run
+    # command: yarn workspace techlab-challenge-2024-3q-backend typeorm migration:run
     environment:
-      - APP_PORT=8080
+      - APP_PORT=8000
       - NODE_ENV=development
-      - DATABASE_URL=postgres://root:supersecret@database:5432/techlab
-      - DATABASE_MIGRATIONS_RUN=true
+      - DATABASE_URL=mongodb://mongodb:27017/database
+      - SECRET="23345dgfdjhnfgbjuy"
+      # - DATABASE_MIGRATIONS_RUN=true
     networks:
       - techlab_net
     depends_on:
@@ -52,9 +56,10 @@ services:
     links:
       - database
     environment:
-      - APP_PORT=8080
+      - APP_PORT=8000
       - NODE_ENV=development
-      - DATABASE_URL=postgres://root:supersecret@database:5432/techlab
+      - DATABASE_URL=mongodb://mongodb:27017/database
+      - SECRET="23345dgfdjhnfgbjuy"
     networks:
       - techlab_net
     depends_on:
@@ -65,7 +70,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
     ports:
-      - 8080:8080
+      - 8000:8000
     networks: 
       - techlab_net
     depends_on:
@@ -75,5 +80,9 @@ services:
       - backend_1
       - backend_2
 
+volumes: 
+  mongodb_data:
+    driver: local
 networks:
   techlab_net:
+    driver: bridge
