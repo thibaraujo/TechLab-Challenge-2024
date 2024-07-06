@@ -42,7 +42,8 @@ export function ConversationsScreen() {
     setAlert(true);
     setTimeout(() => {
       setAlert(false);
-    }, 3000);
+      location.reload();
+    }, 1800);
 
   };
 

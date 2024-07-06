@@ -2,6 +2,7 @@ import { ListItem, ListItemButton, ListItemIcon, ListItemText, Paper, Typography
 import { IConversation } from "../interfaces/IConversation.js";
 import { useNavigate } from "react-router-dom";
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
+import CircleIcon from '@mui/icons-material/Circle';
 import { useMemo } from "react";
 
 export interface ConversationItemProps {
@@ -30,6 +31,10 @@ export function ConversationItem({ conversation, path }: ConversationItemProps) 
             </ListItemButton>
           </ListItem>
       </Typography>
+      <ListItem>
+        <CircleIcon style={{color: conversation.user? "green": "red", fontSize: 9, marginRight: 10}}/>
+        <ListItemText secondary={conversation.user? "Distribuído" : "Não distribuído"}/>
+      </ListItem>
     </Paper>
   )
 }
