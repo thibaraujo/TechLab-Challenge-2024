@@ -6,14 +6,13 @@ import { ConversationItem } from "../components/ConversationItem.js";
 import { IConversation } from "../interfaces/IConversation.js";
 import { Outlet } from "react-router-dom";
 
-export function ConversationsScreen() {
-  // const user = useAuthenticatedUser()
+export function MyConversationsScreen() {
   const accessToken = useAccessToken()
 
   const query = useQuery({
     queryKey: ['conversations'],
     queryFn: async () => {
-      const response = await api.get('/conversations', {
+      const response = await api.get('/conversations/user', {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
 
@@ -26,10 +25,6 @@ export function ConversationsScreen() {
     },
   })
 
-  // const count = useMemo(() => {
-  //   return query.data?.count ?? NaN
-  // }, [query.data?.count])
-
   const conversations = query.data?.results ?? null
 
   return (
@@ -37,8 +32,8 @@ export function ConversationsScreen() {
       <Grid item xs={2}>
         <Grid container spacing={1}>
           {conversations?.map((conversation) => (
-            <Grid item key={`conversations:${conversation._id}`}>
-              <ConversationItem conversation={conversation} path={"conversations"}/>
+            <Grid item key={`my_conversations:${conversation._id}`}>
+              <ConversationItem conversation={conversation} path={"my_conversations"}/>
             </Grid>
           ))}
         </Grid>

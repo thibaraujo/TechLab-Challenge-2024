@@ -1,6 +1,6 @@
 import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useHasScope } from "../hooks/useAuthenticationContext.js";
+import { useAuthenticationContext, useHasScope } from "../hooks/useAuthenticationContext.js";
 import PeopleIcon from '@mui/icons-material/People';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
@@ -13,7 +13,15 @@ const drawerWidth = 240;
 export function Dashboard() {
   const [available, setAvailable] = useState(true); 
 
+  const context = useAuthenticationContext();
+
   let navigate = useNavigate();
+
+  const logout = () => {
+    localStorage.clear();
+    navigate("/");
+    location.reload();
+  };
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -32,15 +40,25 @@ export function Dashboard() {
         >
           <div>
             <List>
+              { context.user?.profile == "sudo" && (
+                <ListItem disablePadding>
+                  <ListItemButton onClick={() => navigate("/conversations")}>
+                    <ListItemIcon>
+                      <QuestionAnswerIcon />
+                    </ListItemIcon>
+                    <ListItemText primary='Conversas' />
+                  </ListItemButton>
+                </ListItem>
+              )}
               <ListItem disablePadding>
-                <ListItemButton onClick={() => navigate("/conversations")}>
+                <ListItemButton onClick={() => navigate("/my_conversations")}>
                   <ListItemIcon>
                     <QuestionAnswerIcon />
                   </ListItemIcon>
-                  <ListItemText primary='Conversas' />
+                  <ListItemText primary='Minhas conversas' />
                 </ListItemButton>
               </ListItem>
-              {useHasScope('users:*', 'users:read') && (
+              {context.user?.profile == "sudo" && (
                 <ListItem disablePadding>
                   <ListItemButton onClick={() => navigate("/users")}>
                     <ListItemIcon>
@@ -50,7 +68,15 @@ export function Dashboard() {
                   </ListItemButton>
                 </ListItem>
               )}
-              {useHasScope('users:*', 'users:read') && (
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => navigate(`/profile/${context.user?._id}`)}>
+                  <ListItemIcon>
+                    <PeopleIcon />
+                  </ListItemIcon>
+                  <ListItemText primary='Meu Perfil' />
+                </ListItemButton>
+              </ListItem>
+              {context.user?.profile == "sudo" && (
                 <ListItem disablePadding>
                   <ListItemButton onClick={() => navigate("/new_user")}>
                     <ListItemIcon>
@@ -67,16 +93,14 @@ export function Dashboard() {
               <ListItemText primary={available ? "Disponível" : "Indisponível"} />
             </ListItem>
           </div>
-          <Link to='/' onClick={() => alert("remover token aqui pra voltar pro login")} style={{bottom: "0", position: "absolute", width: "100%", marginBottom: "10"}}>
-            <ListItem disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <Logout />
-                </ListItemIcon>
-                <ListItemText primary='Sair' />
-              </ListItemButton>
-            </ListItem>
-          </Link>
+          <ListItem disablePadding style={{bottom: "0", position: "absolute", width: "100%", marginBottom: "10"}}>
+            <ListItemButton onClick={logout}>
+              <ListItemIcon>
+                <Logout />
+              </ListItemIcon>
+              <ListItemText primary='Sair' />
+            </ListItemButton>
+          </ListItem>
         </Drawer>
       </Box>
       <Box
