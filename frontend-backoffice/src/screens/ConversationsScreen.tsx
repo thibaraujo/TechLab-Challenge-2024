@@ -56,7 +56,7 @@ export function ConversationsScreen() {
   return (
     <>
     <Grid container>
-      <Grid item>
+      <Grid item mt={1} ml={1}>
       <LoadingButton
         variant="contained"
         style={{ padding: 16 }}
