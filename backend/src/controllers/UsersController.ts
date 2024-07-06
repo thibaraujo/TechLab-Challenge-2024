@@ -2,19 +2,13 @@ import { NextFunction, Request, Response } from "express";
 import { Profile, User } from "../entities/User.js";
 import bcrypt from "bcrypt";
 import { UserModel } from "../model/user.js";
+import { CustomRequest } from "../interfaces/ICustomRequest.js";
 
 export class UsersController {
     public async find(req: Request, res: Response, next: NextFunction) {
         try {
-            let { page = 1, pageSize = 10 } = req.query;
-
             const query: any = { deletedAt: null };
-
-            page = parseInt(page as string);
-            pageSize = parseInt(pageSize as string);
-            const skip = (page - 1) * pageSize;
-
-            const users = (await UserModel.find(query).lean().skip(skip).limit(pageSize).sort({ _id: -1 }).exec());
+            const users = (await UserModel.find(query).lean().sort({ _id: -1 }).exec());
 
             return res.status(200).send({ results: users, total: await UserModel.countDocuments(query) });
         } catch (error) {
@@ -80,10 +74,10 @@ export class UsersController {
       }
     }
 
-    public async patch(req: Request, res: Response, next: NextFunction) {
+    public async patchAvailable(req: CustomRequest, res: Response, next: NextFunction) {
       try {
-        const user = await UserModel.findById(req.query.id).exec();
-        if (!user) return res.status(404).send({ message: `Usuário não encontrado com ID ${req.query._id}` });
+        const user = await UserModel.findById(req.user?._id).exec();
+        if (!user) return res.status(404).send({ message: `Usuário não encontrado: ${req.user?._id}` });
 
         Object.assign(user, req.body);
         await user.save();
@@ -91,7 +85,7 @@ export class UsersController {
         return res.status(200).send(user);
 
         } catch (error) {
-            console.error("ERRO ATUALIZANDO USUÁRIO: ", error);
+            console.error("ERRO ATUALIZANDO DISPONIBILIDADE: ", error);
             return next(error);
         }
     }
