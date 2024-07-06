@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api";
-import { useAccessToken } from "../hooks/useAuthenticationContext";
+import { useAccessToken, useAuthenticationContext } from "../hooks/useAuthenticationContext";
 import { IUser, IUserPayload } from "../interfaces/IUser";
 import { useEffect } from "react";
 import { LoadingButton } from "@mui/lab";
@@ -23,6 +23,7 @@ export function UserScreen() {
   if (!userId) throw new Error('No userId provided');
 
   const accessToken = useAccessToken();
+  const context = useAuthenticationContext();
 
   const save = useMutation({
     mutationFn: async (user: Partial<IUser>) => {
@@ -40,7 +41,7 @@ export function UserScreen() {
         setAlert(false);
       }, 3000);
 
-      if(response.status == 200) navigate("/users")
+      if((response.status == 200) && (context.user?.profile == "sudo")) navigate("/users") 
     }
   });
 
@@ -83,12 +84,17 @@ export function UserScreen() {
       <Grid item sm={10}>
         {/* <TextField label="Password" {...form.register('password')} type="password" fullWidth /> */}
       </Grid>
-      <Grid item sm={10}>
-        <Select label="Profile" {...form.register('profile')} defaultValue={user.data.profile} fullWidth>
-          <MenuItem value='standard'>Standard</MenuItem>
-          <MenuItem value='sudo'>Sudo</MenuItem>
-        </Select>
-      </Grid> 
+      {
+        context.user?.profile == "sudo" && (
+          <Grid item sm={10}>
+            <Select label="Profile" {...form.register('profile')} defaultValue={user.data.profile} fullWidth>
+              <MenuItem value='standard'>Standard</MenuItem>
+              <MenuItem value='sudo'>Sudo</MenuItem>
+            </Select>
+          </Grid> 
+        )
+      }
+      
       <Grid item sm={10}>
         <LoadingButton
           variant="contained"
