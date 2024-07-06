@@ -1,19 +1,19 @@
 import { Box, Drawer, Divider, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useAuthenticationContext, useHasScope } from "../hooks/useAuthenticationContext.js";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useAuthenticationContext } from "../hooks/useAuthenticationContext.js";
 import PeopleIcon from '@mui/icons-material/People';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Logout from '@mui/icons-material/Logout';
 import QuestionAnswerIcon from '@mui/icons-material/QuestionAnswer';
 import { useState } from "react";
 import Switch from '@mui/material/Switch';
+import { api } from "../services/api.js";
 
 const drawerWidth = 240;
 
 export function Dashboard() {
-  const [available, setAvailable] = useState(true); 
-
   const context = useAuthenticationContext();
+  const [available, setAvailable] = useState(context.user?.available);
 
   let navigate = useNavigate();
 
@@ -21,6 +21,14 @@ export function Dashboard() {
     localStorage.clear();
     navigate("/");
     location.reload();
+  };
+
+  const handleAvailable = async () => {
+    const response = await api.patch('/users/available', { available: !available}, {
+      headers: { Authorization: `Bearer ${context.accessToken}` }
+    })
+
+    setAvailable(response.data.available);;
   };
 
   return (
@@ -89,7 +97,7 @@ export function Dashboard() {
             </List>
             <Divider />
             <ListItem disablePadding>
-              <Switch checked={available} onChange={() => setAvailable(!available)}></Switch>
+              <Switch checked={available} onChange={handleAvailable}></Switch>
               <ListItemText primary={available ? "Disponível" : "Indisponível"} />
             </ListItem>
           </div>
