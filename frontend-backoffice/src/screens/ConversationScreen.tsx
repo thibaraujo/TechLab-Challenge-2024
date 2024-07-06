@@ -133,7 +133,7 @@ export function ConversationScreen() {
   if (!conversation.data) throw new Error('Failed to laod conversation')
 
   return (
-    <Box display='flex' flexDirection='column' height='90vh' py={2}>
+    <Box display='flex' flexDirection='column' height='90vh' py={2} position={"fixed"} width={"70vw"}>
       <Box>
         <Typography variant='h5'>{conversation.data.subject}</Typography>
         {conversation.data.consumer.name && <Typography variant='subtitle1'>{conversation.data.consumer.name}</Typography>}

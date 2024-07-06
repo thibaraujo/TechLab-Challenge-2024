@@ -42,7 +42,8 @@ export function ConversationsScreen() {
     setAlert(true);
     setTimeout(() => {
       setAlert(false);
-    }, 3000);
+      location.reload();
+    }, 1800);
 
   };
 
@@ -55,7 +56,7 @@ export function ConversationsScreen() {
   return (
     <>
     <Grid container>
-      <Grid item>
+      <Grid item mt={1} ml={1}>
       <LoadingButton
         variant="contained"
         style={{ padding: 16 }}
