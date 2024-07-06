@@ -8,6 +8,7 @@ export default {
         return celebrate({
             [Segments.QUERY]: {
                 id: Joi.string().length(24).hex(),
+                available: Joi.string().valid("true", "false"),
             },
         });
     },

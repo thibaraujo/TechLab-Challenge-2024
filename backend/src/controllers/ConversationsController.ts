@@ -9,13 +9,17 @@ export class ConversationsController {
 
     public async find(req: Request, res: Response, next: NextFunction) {
         try {
-            const { consumer, user } = req.query;
+            const { consumer, user, distributed } = req.query;
             const query: any = {
                 deletedAt: null
             };
 
             if(consumer) query.consumer = consumer;
             if(user) query.user = user;
+            if(distributed) {
+              if(distributed.toString().toLowerCase() == 'true') query.user = { $ne: null };
+              else query.user = { $eq: null };
+            } 
 
             const conversations = (await ConversationModel.find(query).lean().sort({ _id: -1 }).exec());
 
@@ -120,8 +124,10 @@ export class ConversationsController {
     public async distribute(req: Request, res: Response, next: NextFunction) {
       try {
         const totalConversations = await ConversationModel.find({ deletedAt: null, user: null }).lean().exec();
-        const totalUsers = await UserModel.find({ deletedAt: null }).lean().exec();
+        const totalUsers = await UserModel.find({ deletedAt: null, available: true }).lean().exec();
 
+        console.log(totalConversations.length, totalUsers.length);
+        
         const bulkUpdates = totalConversations.map((conversation, i) => {
           const userToDistribute = totalUsers[i % totalUsers.length];
           return {

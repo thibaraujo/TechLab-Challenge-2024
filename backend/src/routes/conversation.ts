@@ -65,5 +65,13 @@ router.delete(URL,
   })
 );
 
+//distribute conversation
+router.post(URL + "/distribute",
+  authentication.sudoMiddleware,
+  _catch((req, res, next) => {
+    singleton(ConversationsController).distribute(req, res, next).catch(next)
+  })
+);
+
 
 export default router

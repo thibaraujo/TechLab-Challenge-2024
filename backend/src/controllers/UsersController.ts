@@ -7,7 +7,10 @@ import { CustomRequest } from "../interfaces/ICustomRequest.js";
 export class UsersController {
     public async find(req: Request, res: Response, next: NextFunction) {
         try {
+            const { available } = req.query;
             const query: any = { deletedAt: null };
+            
+            if (available?.toString().toLowerCase() == "true") query.available = true;
             const users = (await UserModel.find(query).lean().sort({ _id: -1 }).exec());
 
             return res.status(200).send({ results: users, total: await UserModel.countDocuments(query) });
