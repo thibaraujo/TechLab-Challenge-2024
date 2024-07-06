@@ -20,14 +20,14 @@ export function ConversationItem({ conversation, path }: ConversationItemProps) 
   let navigate = useNavigate();
 
   return (
-    <Paper>
+    <Paper style={{width: "12vw"}}>
       <Typography variant="body1" gutterBottom>
         <ListItem disablePadding>
             <ListItemButton onClick={() => navigate(`/${path}/${conversation._id}`)}>
               <ListItemIcon>
                 <ChatBubbleIcon />
               </ListItemIcon>
-              <ListItemText primary={conversation.subject} secondary={consumerIdentifier}/>
+              <ListItemText primary={conversation.subject} secondary={consumerIdentifier} primaryTypographyProps={{ noWrap: true }}/>
             </ListItemButton>
           </ListItem>
       </Typography>
