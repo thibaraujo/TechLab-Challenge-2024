@@ -5,6 +5,8 @@ import "dotenv/config";
 import express from "express";
 import routes from "./routes/index.js";
 import database from "./services/database.js";
+import { errorHandler } from "./services/errorHandler.js";
+import { errors } from "celebrate";
 
 
 // EXPRESS
@@ -47,6 +49,9 @@ app.use(express.json());
 app.disable("x-powered-by");
 app.use("/api", routes);
 
+// ERROR MESSAGE PADRONIZATION
+app.use(errors());
+app.use(errorHandler);
 
 // setTimeout(() => {
 

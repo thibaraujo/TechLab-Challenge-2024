@@ -163,10 +163,10 @@ export function ConversationScreen() {
       </Box>
       <Box mt='auto' px={4} mb={1}>
         <Grid container spacing={2}>
-          <Grid item sm={10}>
+          <Grid item sm={9}>
             <TextField {...form.register('content')} multiline fullWidth onSubmit={submit} onKeyUp={handleKeyPress}/>
           </Grid>
-          <Grid item sm={1} mt='auto'>
+          <Grid item sm={1} mt='auto' mr={2}>
             <LoadingButton loading={send.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SendIcon />} onClick={submit}>
               Send
             </LoadingButton>

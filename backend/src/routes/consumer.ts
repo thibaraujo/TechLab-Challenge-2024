@@ -6,6 +6,7 @@ import { _catch } from "../middlewares/catch.js";
 import { ConsumersController } from "../controllers/ConsumersController.js";
 import validator from "../validator/consumer.js";
 import authenticationConsumer from "../services/authenticationConsumer.js";
+import { celebrateErrorHandler } from "../services/errorHandler.js";
 
 
 const router = Router();
@@ -18,6 +19,7 @@ router.post(URL + "/sign-in", validator.sigIn(), _catch((req, res, next) => {
 
 router.post(URL,
   validator.post(),
+  celebrateErrorHandler,
   _catch((req, res, next) => {
     singleton(ConsumersController).create(req, res, next).catch(next)
   })

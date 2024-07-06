@@ -35,7 +35,7 @@ export class UsersController {
       try {
         const user = new UserModel(req.body as User);
 
-        if (!user.password) return res.status(400).send({ message: "Senha não informada" });
+        if (!user.password) throw new Error("Senha não informada.");
         const passwordHash = await bcrypt.hash(user.password, 10);
         user.password = passwordHash;
           
@@ -52,7 +52,7 @@ export class UsersController {
       try {
         const user = new UserModel({...req.body, profile: Profile.Standard});
 
-        if (!user.password) return res.status(400).send({ message: "Senha não informada." });
+        if (!user.password) throw new Error("Senha não informada.");
         const passwordHash = await bcrypt.hash(user.password, 10);
         user.password = passwordHash;
           

@@ -2,6 +2,7 @@
 
 import { celebrate, Segments, Joi } from "celebrate";
 import { Profile } from "../entities/User.js";
+import { customMessages } from "../services/errorHandler.js";
 
 export default {
     get() {
@@ -10,7 +11,7 @@ export default {
                 id: Joi.string().length(24).hex(),
                 available: Joi.string().valid("true", "false"),
             },
-        });
+        }, { messages: customMessages });
     },
 
     post() {
@@ -22,7 +23,7 @@ export default {
                 profile: Joi.string().valid(...Object.values(Profile)).required(),
                 available: Joi.boolean().default(true),
             },
-        });
+        }, { messages: customMessages });
     },
 
     put() {
@@ -36,7 +37,7 @@ export default {
                 profile: Joi.string(),
                 available: Joi.boolean().default(true),
             },
-        });
+        }, { messages: customMessages });
     },
 
     patchAvailable() {
@@ -44,7 +45,7 @@ export default {
             [Segments.BODY]: {
                 available: Joi.boolean().required()
             },
-        });
+        }, { messages: customMessages });
     },
 
     delete() {
@@ -52,7 +53,7 @@ export default {
             [Segments.QUERY]: {
                 id: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 
     login() {
@@ -65,6 +66,6 @@ export default {
                     authorization : Joi.string().regex(/\b(Bearer)\b/i),
                 }).unknown(true)
             ),
-        });
+        }, { messages: customMessages });
     }
 }

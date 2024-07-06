@@ -1,6 +1,7 @@
 "use strict";
 
 import { celebrate, Segments, Joi } from "celebrate";
+import { customMessages } from "../services/errorHandler.js";
 
 export default {
     get() {
@@ -11,7 +12,7 @@ export default {
                 user: Joi.string().length(24).hex(),
                 distributed: Joi.string()
             },
-        });
+        }, { messages: customMessages });
     },
 
     post() {
@@ -21,7 +22,7 @@ export default {
                 consumer: Joi.string().length(24).hex().required(),
                 user: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 
     put() {
@@ -34,7 +35,7 @@ export default {
                 consumer: Joi.string().length(24).hex(),
                 user: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 
     delete() {
@@ -42,6 +43,6 @@ export default {
             [Segments.QUERY]: {
                 id: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 }

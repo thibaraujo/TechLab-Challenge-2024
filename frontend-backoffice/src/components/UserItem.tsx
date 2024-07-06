@@ -67,7 +67,7 @@ export function UserItem({ user }: IUserItemProps) {
   };
 
   return (
-    <Paper style={{width:"85vw"}}>
+    <Paper style={{width:"80vw"}}>
       <Typography variant="body1" gutterBottom>
         <ListItem disablePadding>
           <ListItemButton>

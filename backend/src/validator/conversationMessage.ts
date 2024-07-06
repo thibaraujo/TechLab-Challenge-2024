@@ -2,6 +2,7 @@
 
 import { celebrate, Segments, Joi } from "celebrate";
 import { ConversationMessageBy } from "../entities/ConversationMessage.js";
+import { customMessages } from "../services/errorHandler.js";
 
 export default {
     get() {
@@ -9,7 +10,7 @@ export default {
             [Segments.QUERY]: {
                 id: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 
     post() {
@@ -20,7 +21,7 @@ export default {
                 conversation: Joi.string().length(24).hex().required(),
                 user: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 
     put() {
@@ -34,7 +35,7 @@ export default {
                 conversation: Joi.string().length(24).hex(),
                 user: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 
     delete() {
@@ -42,6 +43,6 @@ export default {
             [Segments.QUERY]: {
                 id: Joi.string().length(24).hex(),
             },
-        });
+        }, { messages: customMessages });
     },
 }
