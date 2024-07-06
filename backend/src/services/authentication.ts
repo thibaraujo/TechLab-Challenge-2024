@@ -86,7 +86,7 @@ class Authentication {
 
       if (hash) {
         if (!user._id) throw "Usuário não possui _id.";
-
+        await UserModel.updateOne({ _id: user._id }, { $set: { available: true } }, { new: true }	);
         return { ...user, token: this.generateJWT(user as User, ip) };
       }
       else throw "Senha incorreta.";

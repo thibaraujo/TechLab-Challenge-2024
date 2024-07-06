@@ -19,6 +19,7 @@ export default {
                 email: Joi.string().email().required(),
                 password: Joi.string().required(),
                 profile: Joi.string().valid(...Object.values(Profile)).required(),
+                available: Joi.boolean().default(true),
             },
         });
     },
@@ -31,7 +32,16 @@ export default {
             [Segments.BODY]: {
                 username: Joi.string(),
                 email: Joi.string().email(),
-                profile: Joi.string()
+                profile: Joi.string(),
+                available: Joi.boolean().default(true),
+            },
+        });
+    },
+
+    patchAvailable() {
+        return celebrate({
+            [Segments.BODY]: {
+                available: Joi.boolean().required()
             },
         });
     },

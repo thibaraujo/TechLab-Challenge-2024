@@ -38,11 +38,11 @@ router.put(URL,
   })
 );
 
-router.patch(URL,
+router.patch(URL + "/available",
   validator.put(),
   authentication.standardMiddleware,
   _catch((req, res, next) => {
-    singleton(UsersController).patch(req, res, next).catch(next)
+    singleton(UsersController).patchAvailable(req, res, next).catch(next)
   })
 );
 

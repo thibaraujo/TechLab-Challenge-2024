@@ -11,11 +11,11 @@ export class AuthenticationController {
 
     try {
       if (!req.ip) return res.status(400).send("IP não encontrado");
-      const user = await authentication.auth(authorization, req.ip) as AuthUser;
+      const user = await authentication.auth(authorization, req.ip) as any;
       
-      user.password = "undefined";
+      delete user.password
 
-      return res.status(200).set("Content-Type", "application/json").send(user as Omit<AuthUser, "password">);
+      return res.status(200).set("Content-Type", "application/json").send(user);
     } catch (error) {
       console.error("ERRO INICIANDO SESSÃO DO USUÁRIO : ", error);
       return res.status(500).send(error);

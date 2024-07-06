@@ -15,6 +15,7 @@ export interface IUser {
   createdAt: Date; 
   updatedAt?: Date; // user update -> default null
   deletedAt?: Date; // user soft delete -> default null
+  available?: boolean;
 }
 export class User {
   _id: mongoose.Types.ObjectId;
@@ -25,6 +26,7 @@ export class User {
   createdAt: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  available?: boolean;
 
   constructor(user: IUser) {
     this._id = user._id || new mongoose.Types.ObjectId();
@@ -35,5 +37,6 @@ export class User {
     this.createdAt = user.createdAt || new Date();
     this.updatedAt = user.updatedAt;
     this.deletedAt = user.deletedAt;
+    this.available = user.available;
   }
 }

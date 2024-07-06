@@ -37,6 +37,9 @@ const UserSchema = new Schema({
     deletedAt: {
         type: Date,
         default: null
+    },
+    available: {
+        type: Boolean,
     }
 });
 
