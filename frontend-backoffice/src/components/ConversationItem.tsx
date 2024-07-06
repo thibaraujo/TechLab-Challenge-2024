@@ -5,10 +5,11 @@ import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import { useMemo } from "react";
 
 export interface ConversationItemProps {
-  conversation: IConversation
+  conversation: IConversation,
+  path: string
 }
 
-export function ConversationItem({ conversation }: ConversationItemProps) {
+export function ConversationItem({ conversation, path }: ConversationItemProps) {
   const consumerIdentifier = useMemo(() => {
     if (conversation.consumer.name) return conversation.consumer.name
 
@@ -21,7 +22,7 @@ export function ConversationItem({ conversation }: ConversationItemProps) {
     <Paper>
       <Typography variant="body1" gutterBottom>
         <ListItem disablePadding>
-            <ListItemButton onClick={() => navigate(`/conversations/${conversation._id}`)}>
+            <ListItemButton onClick={() => navigate(`/${path}/${conversation._id}`)}>
               <ListItemIcon>
                 <ChatBubbleIcon />
               </ListItemIcon>

@@ -56,8 +56,8 @@ export function UserItem({ user }: IUserItemProps) {
     setAlert(true);
     setTimeout(() => {
       setAlert(false);
-      //location.reload(); todo:testar com o token depois
-    }, 3000);
+      location.reload();
+    }, 1800);
 
     if(response.status == 200) {
       navigate("/users", {replace: true});
