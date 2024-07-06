@@ -32,11 +32,15 @@ export class ConversationsController {
 
     public async findMine(req: CustomRequest, res: Response, next: NextFunction) {
       try {
-          const query: any = {
+          const { deleted } = req.query;
+          let query: any = {
               deletedAt: null,
           };
 
+          if(deleted?.toString().toLowerCase() == "true") query = {};
+
           req.user ? query.user = req.user._id : query.consumer = req.consumer;
+          
           const conversations = (await ConversationModel.find(query).lean().sort({ _id: -1 }).exec());
 
           return res.status(200).send({ results: conversations, total: await ConversationModel.countDocuments(query) });

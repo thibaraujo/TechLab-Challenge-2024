@@ -10,7 +10,8 @@ export default {
                 id: Joi.string().length(24).hex(),
                 consumer: Joi.string().length(24).hex(),
                 user: Joi.string().length(24).hex(),
-                distributed: Joi.string()
+                distributed: Joi.string(),
+                deleted: Joi.string().valid("true", "false"),
             },
         }, { messages: customMessages });
     },
