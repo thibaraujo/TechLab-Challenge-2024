@@ -29,7 +29,7 @@ export default function SignIn() {
   let navigate = useNavigate();
 
   const routeChange = () =>{ 
-    let path = `/chat`; 
+    let path = `/conversations`; 
     navigate(path);
   }
 

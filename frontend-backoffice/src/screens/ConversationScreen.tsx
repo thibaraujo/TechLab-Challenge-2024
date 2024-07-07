@@ -64,7 +64,8 @@ export function ConversationScreen() {
         {
           by: 'user',
           conversation: conversationId,
-          content: conversationMessageInput.content
+          content: conversationMessageInput.content,
+          type: "TEXT"
         },
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );

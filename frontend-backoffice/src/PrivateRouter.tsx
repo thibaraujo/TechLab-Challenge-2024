@@ -12,7 +12,7 @@ const router = createBrowserRouter([
     path: '/',
     element: <Dashboard />,
     children: [
-      { path: '/', element: <ConversationsScreen /> },
+      { path: '/', element: <MyConversationsScreen /> },
       {
         path: '/conversations',
         element: <ConversationsScreen />,

@@ -1,4 +1,4 @@
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useAccessToken } from "../hooks/useAuthenticationContext.js";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../services/api.js";
@@ -30,6 +30,9 @@ export function MyConversationsScreen() {
   return (
     <Grid container spacing={1} pl={1} mt={1} style={{maxHeight: "99vh", overflow: "auto"}}>
       <Grid item xs={2}>
+        <Typography variant="h6" component="h6">
+          Minhas Conversas
+        </Typography>
         <Grid container spacing={1}>
           {conversations?.map((conversation) => (
             <Grid item key={`my_conversations:${conversation._id}`}>

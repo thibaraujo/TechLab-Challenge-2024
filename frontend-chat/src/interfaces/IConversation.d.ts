@@ -4,4 +4,5 @@ export interface IConversation {
   _id: string
   subject: string
   consumer: IConsumer
+  deletedAt: Date
 }

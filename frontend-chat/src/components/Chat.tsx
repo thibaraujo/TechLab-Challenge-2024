@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useMemo, useRef, useState } from "react";
 import { AuthenticationContext } from "../contexts/AuthenticationProvider";
 import { IConversation } from "../interfaces/IConversation";
 import { LoadingButton } from "@mui/lab";
@@ -8,6 +8,7 @@ import { api } from "../services/api";
 import { IConversationMessage } from "../interfaces/IConversationMessage";
 import { useForm } from "react-hook-form";
 import SendIcon from '@mui/icons-material/Send';
+import { useParams } from "react-router-dom";
 
 export interface TemporaryConversationMessage {
   _id: string
@@ -22,138 +23,70 @@ export interface IConversationMessageInput {
 
 export function Chat() {
   const scrollRef = useRef<HTMLElement>(null)
+  const params = useParams()
+  const conversationId = params.conversationId
+  const [showSendMessage, setShowSendMessage] = useState(true);
 
-  const { consumer, isLoading, accessToken, signIn } = useContext(AuthenticationContext)
+  const {accessToken } = useContext(AuthenticationContext);
 
-  const conversationQuery = useQuery({
-    queryKey: ['conversations', consumer?._id],
+  useQuery({
+    queryKey: ['conversations', conversationId],
     queryFn: async () => {
-      if (!consumer) return null; 
-  
-      const response = await api.get('/conversations/consumers', {
-        params: { consumer: consumer._id },
+      console.log("dentro do conversation: " , accessToken)
+      const response = await api.get(`/conversations/${conversationId}`, {
         headers: { Authorization: `Bearer ${accessToken}` }
-      });
-  
-      console.log('response', response.data)
-      return (response.data.results[0] ?? null) as IConversation | null;
-    },
-    enabled: !!consumer, 
-  });
-  
+      })
 
-  const conversation = conversationQuery.data
+      
+
+      response.data.deletedAt? setShowSendMessage(false) : setShowSendMessage(true);
+
+      return response.data as IConversation
+    }
+  });
 
   const messagesQuery = useQuery({
-    queryKey: ['conversations', conversation?._id, 'messages'],
+    queryKey: ['conversations', conversationId, 'messages'],
     queryFn: async () => {
-      if (!conversation) return null; 
-  
-      const response = await api.get('/conversationMessages', {
-        params: { id: conversation._id },
-        headers: { Authorization: `Bearer ${accessToken}` }
+      const response = await api.get(`/conversationMessages`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        params: {
+          id: conversationId
+        }
       });
   
-      setTemporaryConversationMessages([]); // Limpa as mensagens temporárias, se necessário
+      console.log(response);
   
       return response.data as {
-        total: number;
-        results: IConversationMessage[];
+        total: number; // todo: alterar aqui
+        results: IConversationMessage[]; 
       };
     },
-    enabled: !!conversation, // Habilita a execução da consulta somente se conversation estiver definido
-    refetchInterval: 20 * 1000 // Intervalo de refetch de 20 segundos, se necessário
+    refetchInterval: 20 * 1000
   });
   
 
-  const [temporaryConversationMessages, setTemporaryConversationMessages] = useState<TemporaryConversationMessage[]>([])
 
-  const pushTemporaryConversationMessage = useCallback((message: Omit<TemporaryConversationMessage, '_id' | 'createdAt'>) => {
-    setTemporaryConversationMessages((messages) => [
-      ...messages,
-      { _id: self.crypto.randomUUID(), createdAt: new Date().toISOString(), ...message }
-    ])
-  }, [])
 
   const messages = useMemo(() => [
-    ...messagesQuery.data?.results ?? [],
-    ...temporaryConversationMessages
+    ...messagesQuery.data?.results ?? []
   ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
-  [temporaryConversationMessages, messagesQuery.data?.results])
-
-  const documentQuestionOpen = useRef(false)
-  const subjectQuestionOpen = useRef(false)
+  [messagesQuery.data?.results])
 
   const send = useMutation({
     mutationFn: async (conversationMessageInput: IConversationMessageInput) => {
-      console.log(temporaryConversationMessages)
-      if (documentQuestionOpen.current) {
-        signIn(conversationMessageInput.content)
 
-        pushTemporaryConversationMessage({ by: 'consumer', content: conversationMessageInput.content })
-
-        documentQuestionOpen.current = false
-
-        return
-      }
-
-      if (subjectQuestionOpen.current && conversation) {
-        pushTemporaryConversationMessage({ by: 'consumer', content: conversationMessageInput.content })
-        console.log('bearer', accessToken)
-        await api.post(
-          `/conversationMessages`,
-          {
-            by: 'consumer',
-            conversation: conversation?._id,
-            content: conversationMessageInput.content
-          },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-
-        subjectQuestionOpen.current = false
-
-        conversationQuery.refetch()
-
-        return
-      }
-
-      if (!conversation) {
-        console.log("nao tem")
-        const resp = await api.post(
-          `/conversations`,
-          {
-            consumer: consumer?._id,
-            subject: conversationMessageInput.content
-          },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-
-        conversationQuery.refetch()
-
-        await api.post(
-          `/conversationMessages`,
-          {
-            by: 'consumer',
-            conversation: resp.data._id,
-            content: conversationMessageInput.content
-          },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-      }
-      else {
-        console.log("tem")
-        await api.post(
-          `/conversationMessages`,
-          {
-            by: 'consumer',
-            conversation: conversation?._id,
-            content: conversationMessageInput.content
-          },
-          { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-      }
-
-      messagesQuery.refetch()
+      console.log('bearer', accessToken)
+      await api.post(
+        `/conversationMessages`,
+        {
+          by: 'consumer',
+          conversation: conversationId,
+          content: conversationMessageInput.content,
+          type: "TEXT"
+        },
+        { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
     },
     onSuccess: () => messagesQuery.refetch()
   })
@@ -184,30 +117,8 @@ export function Chat() {
     submit(event)
   }, [submit])
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (consumer) return;
-
-    if (documentQuestionOpen.current) return;
-
-    documentQuestionOpen.current = true
-
-    pushTemporaryConversationMessage({ by: 'system', content: 'Qual o número do seu documento?' })
-  }, [isLoading, consumer])
-
-  useEffect(() => {
-    if (conversationQuery.isLoading) return;
-
-    if (conversation !== null) return;
-    
-    pushTemporaryConversationMessage({ by: 'system', content: 'Qual o assunto do atendimento?' })
-
-    subjectQuestionOpen.current = true
-  }, [conversationQuery.isLoading, conversation])
-
   return (
-    <Box display='flex' flexDirection='column' height='100vh' py={2}>
+    <Box display='flex' flexDirection='column' height='100vh' py={2} position={"fixed"} width={"70vw"}>
       <Box>
       </Box>
       <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef} display='flex' justifyContent='center'>
@@ -236,19 +147,21 @@ export function Chat() {
           ))}
         </List>
       </Box>
-
-      <Box mt='auto' px={4}>
-        <Grid container spacing={2}>
-          <Grid item sm={11}>
-            <TextField {...form.register('content')} multiline fullWidth onSubmit={submit} onKeyUp={handleKeyPress}/>
+      {showSendMessage && (
+        <Box mt='auto' px={4} mb={1}>
+          <Grid container spacing={2}>
+            <Grid item sm={11}>
+              <TextField {...form.register('content')} multiline fullWidth onSubmit={submit} onKeyUp={handleKeyPress}/>
+            </Grid>
+            <Grid item sm={1} mt='auto'>
+              <LoadingButton loading={send.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SendIcon />} onClick={submit}>
+                Enviar
+              </LoadingButton>
+            </Grid>
           </Grid>
-          <Grid item sm={1} mt='auto'>
-            <LoadingButton loading={send.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SendIcon />} onClick={submit}>
-              Send
-            </LoadingButton>
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      )}
+      
     </Box>
   )
 }
