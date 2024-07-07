@@ -57,15 +57,15 @@ export function ConversationsScreen() {
     <>
     <Grid container>
       <Grid item mt={1} ml={1}>
-      <LoadingButton
-        variant="contained"
-        style={{ padding: 16 }}
-        startIcon={<LocalShipping />}
-        onClick={distributeConversations}
-      >
-        Distribuir conversas
-      </LoadingButton>
-    </Grid>
+        <LoadingButton
+          variant="contained"
+          style={{ padding: 16 }}
+          startIcon={<LocalShipping />}
+          onClick={distributeConversations}
+        >
+          Distribuir conversas
+        </LoadingButton>
+      </Grid>
     <Grid item>
       {statusAlert == 200 ? 
         alert && 

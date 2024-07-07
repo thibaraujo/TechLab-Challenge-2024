@@ -21,6 +21,15 @@ const darkTheme = createTheme({
             
         },
     },
+    components: {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#373e4e"
+          }
+        }
+      }
+    }
 })
 
 const lightTheme = createTheme({
@@ -35,11 +44,27 @@ const lightTheme = createTheme({
             contrastText: "#ffffff"
         },
         background: {
-            default: "#ffffff"
+            default: "#efefef"
         },
         text: {
             primary: "#202735"
         }
+    },
+    components: {
+      MuiListItemText: {
+        styleOverrides: {
+          root: {
+            color: "#3833bc"
+          }
+        }
+      },
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            color: "#3833bc"
+          }
+        }
+      },
     }
 })
 
@@ -48,7 +73,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     height: 34,
     padding: 7,
     position: 'absolute',
-    right: 25,
+    right: 5,
     top: 10,
     '& .MuiSwitch-switchBase': {
       margin: 1,

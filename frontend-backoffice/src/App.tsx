@@ -14,16 +14,23 @@ import { useState } from "react";
 const queryClient = new QueryClient()
 
 export function App() {
-  const [light, setLight] = useState(true);
+  const [light, setLight] = useState((localStorage.getItem("theme") === "false"));
+
+  const handleTheme = () => {
+    setLight(!light);
+    console.log("novo tema: ", light.toString());
+    localStorage.setItem("theme", light.toString());
+  };
+
 
   return (
     <QueryClientProvider client={queryClient}>
-      
+
       <ThemeProvider theme={light ? lightTheme : darkTheme}>
         
         <CssBaseline />
         <AuthenticationProvider>
-          <MaterialUISwitch checked={light} onChange={() => setLight(prev => !prev)}/>
+          <MaterialUISwitch checked={light} onChange={handleTheme}/>
           <Router />
         </AuthenticationProvider>
       </ThemeProvider>

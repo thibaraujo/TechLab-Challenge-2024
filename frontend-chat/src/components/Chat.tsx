@@ -121,7 +121,7 @@ export function Chat() {
     <Box display='flex' flexDirection='column' height='100vh' py={2} position={"fixed"} width={"70vw"}>
       <Box>
       </Box>
-      <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef} display='flex' justifyContent='center'>
+      <Box maxHeight='80%' overflow='hidden' ref={scrollRef} display='flex' justifyContent='center'>
         <List style={{ maxWidth: "90%", width: "100%" }}>
           {messages.map((message) => (
             <ListItem 
@@ -134,11 +134,12 @@ export function Chat() {
                 width: "fit-content",
                 color: "#ffffff",
                 marginLeft: message.by === "consumer" ? "auto" : 0,
-                marginRight: message.by === "consumer" ? 0 : "auto"
+                marginRight: message.by === "consumer" ? 0 : "auto",
+                overflow: "hidden"
               }}
             >
-              <Box>
-                <Typography variant='body1'>{message.content}</Typography>
+              <Box style={{overflow: "hidden"}}>
+                <Typography variant='body1' style={{overflow: "hidden"}}>{message.content}</Typography>
                 <span style={{ width: 5 }} />
                 <Typography variant='overline'>{message.by === "system" ? "Mensagem enviada pelo sistema" : " "}</Typography>
                 <Typography variant='overline'>{new Date(message.createdAt).toLocaleString()}</Typography>
