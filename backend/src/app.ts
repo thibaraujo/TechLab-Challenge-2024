@@ -38,6 +38,7 @@ const options: cors.CorsOptions = {
     "Content-Type",
     "Access-Control-Allow-Origin",
     "Accept",
+    "responseType",
   ],
   credentials: true,
   methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",

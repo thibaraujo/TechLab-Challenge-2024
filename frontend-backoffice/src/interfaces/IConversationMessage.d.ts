@@ -3,6 +3,8 @@ export interface IConversationMessage {
   content: string
   by: 'consumer' | 'system' | 'user'
   createdAt: string
+  type: ConversationType
+  fileId: string
 }
 
 export enum ConversationType {

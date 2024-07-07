@@ -2,13 +2,14 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "r
 import { AuthenticationContext } from "../contexts/AuthenticationProvider";
 import { IConversation } from "../interfaces/IConversation";
 import { LoadingButton } from "@mui/lab";
-import { Box, Typography, List, ListItem, Grid, TextField } from "@mui/material";
+import { Box, Typography, List, ListItem, Grid, TextField, Button, styled } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
 import { IConversationMessage } from "../interfaces/IConversationMessage";
 import { useForm } from "react-hook-form";
 import SendIcon from '@mui/icons-material/Send';
 import { useParams } from "react-router-dom";
+import { CloudUpload } from "@mui/icons-material";
 
 export interface TemporaryConversationMessage {
   _id: string
@@ -29,6 +30,18 @@ export function Chat() {
 
   const {accessToken } = useContext(AuthenticationContext);
 
+  const VisuallyHiddenInput = styled('input')({
+    clip: 'rect(0 0 0 0)',
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+  });
+
   useQuery({
     queryKey: ['conversations', conversationId],
     queryFn: async () => {
@@ -36,8 +49,6 @@ export function Chat() {
       const response = await api.get(`/conversations/${conversationId}`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
-
-      
 
       response.data.deletedAt? setShowSendMessage(false) : setShowSendMessage(true);
 
@@ -123,6 +134,17 @@ export function Chat() {
     submit(event)
   }, [submit])
 
+  const upload = async (event: any) => {
+    console.log("aqui: ", event.target.files)
+    const file = event.target.files[0];
+    const response = await api.post(`/files`, {file}, {
+      params: { conversation: conversationId },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": 'multipart/form-data' }
+    });
+
+    console.log("arquivoooo: ", response)
+  };
+
   return (
     <Box display='flex' flexDirection='column' height='100vh' py={2} position={"fixed"} width={"70vw"}>
       <Box>
@@ -156,13 +178,27 @@ export function Chat() {
       {showSendMessage && (
         <Box mt='auto' px={4} mb={1}>
           <Grid container spacing={2}>
-            <Grid item sm={11}>
+            <Grid item sm={9}>
               <TextField {...form.register('content')} multiline fullWidth onSubmit={submit} onKeyUp={handleKeyPress}/>
             </Grid>
-            <Grid item sm={1} mt='auto'>
+            <Grid item sm={1} mt='auto' mr={6}>
               <LoadingButton loading={send.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SendIcon />} onClick={submit}>
                 Enviar
               </LoadingButton>
+            </Grid>
+            <Grid item sm={1} mt='auto'>
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                style={{ padding: 16 }}
+                startIcon={<CloudUpload />}
+                onChange={(e) => upload(e)}
+              >
+                Arquivo
+                <VisuallyHiddenInput type="file" id="file" name="file" />
+              </Button>
             </Grid>
           </Grid>
         </Box>

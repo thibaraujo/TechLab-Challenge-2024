@@ -1,4 +1,4 @@
-import { Box, Grid, List, ListItem, Skeleton, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, List, ListItem, Skeleton, TextField, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api.js";
@@ -73,6 +73,24 @@ export function ConversationScreen() {
     onSuccess: () => messagesQuery.refetch()
   });
   
+  const downloadFile = async ( fileId: string ) => {
+  
+    const response = await api.get(`/files`, {
+      params: { file: fileId },
+      headers: { Authorization: `Bearer ${accessToken}`, responseType: 'blob'}
+    });
+
+    const href = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = href;
+    link.setAttribute('download', "file.pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+
+    console.log("arquivoooo: ", response)
+  };
 
   const close = useMutation({
     mutationFn: async () => {
@@ -159,6 +177,9 @@ export function ConversationScreen() {
                 <span style={{ width: 5 }}/>
                 <Typography variant='overline'>{message.by == "system" ? "Mensagem enviada pelo sistema" : " "}</Typography>
                 <Typography variant='overline'>{new Date(message.createdAt).toLocaleString()}</Typography>
+                {message.type == "FILE" && (
+                  <Button variant="contained" onClick={() => downloadFile(message.fileId)}>Download</Button>
+                )}
               </Box>
             </ListItem>
           ))}
