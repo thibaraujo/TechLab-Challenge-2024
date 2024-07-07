@@ -1,6 +1,13 @@
 export interface IConversationMessage {
-  _id: string
+  id: string
   content: string
   by: 'consumer' | 'system' | 'user'
   createdAt: string
+  type: ConversationType
+  fileId: string
+}
+
+export enum ConversationType {
+  FILE = "FILE",
+  TEXT = "TEXT"
 }

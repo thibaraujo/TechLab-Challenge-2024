@@ -84,6 +84,26 @@ export function Chat() {
   ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
   [messagesQuery.data?.results])
 
+  const downloadFile = async ( fileId: string ) => {
+  
+    const response = await api.get(`/files`, {
+      params: { file: fileId },
+      headers: { Authorization: `Bearer ${accessToken}`},
+      responseType: 'blob'
+    });
+
+    const href = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = href;
+    link.setAttribute('download', "file.pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+
+    console.log("arquivoooo: ", response)
+  };
+
   useEffect(() => {
     if (!scrollRef.current) return
 
@@ -142,6 +162,7 @@ export function Chat() {
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": 'multipart/form-data' }
     });
 
+    location.reload();
     console.log("arquivoooo: ", response)
   };
 
@@ -153,7 +174,7 @@ export function Chat() {
         <List style={{ maxWidth: "90%", width: "100%" }}>
           {messages.map((message) => (
             <ListItem 
-              key={`messages:${message._id}`} 
+              key={`messages:${message.id}`} 
               style={{
                 borderRadius: 5,
                 backgroundColor: message.by === "consumer" ? "#373e4e" : message.by === "system" ? "#555659" : "#3833bc",
@@ -170,6 +191,9 @@ export function Chat() {
                 <span style={{ width: 5 }} />
                 <Typography variant='overline'>{message.by === "system" ? "Mensagem enviada pelo sistema" : " "}</Typography>
                 <Typography variant='overline'>{new Date(message.createdAt).toLocaleString()}</Typography>
+                {message.type == "FILE" && (
+                  <Button variant="contained" onClick={() => downloadFile(message.fileId)}>Download</Button>
+                )}
               </Box>
             </ListItem>
           ))}
@@ -197,7 +221,7 @@ export function Chat() {
                 onChange={(e) => upload(e)}
               >
                 Arquivo
-                <VisuallyHiddenInput type="file" id="file" name="file" />
+                <VisuallyHiddenInput type="file" id="file" name="file" accept=".pdf"/>
               </Button>
             </Grid>
           </Grid>
