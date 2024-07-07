@@ -42,8 +42,17 @@ const darkTheme = createTheme({
             backgroundColor: "#373e4e"
           }
         }
+      },
+      MuiCssBaseline: {
+        styleOverrides: {
+          div: {
+            "&::-webkit-scrollbar": {
+              display: "none"
+            }
+          }
+        }
       }
-    }
+    },
 })
 
 const lightTheme = createTheme({
@@ -79,6 +88,15 @@ const lightTheme = createTheme({
           }
         }
       },
+      MuiCssBaseline: {
+        styleOverrides: {
+          div: {
+            "&::-webkit-scrollbar": {
+              display: "none"
+            }
+          }
+        }
+      }
     }
 })
 
