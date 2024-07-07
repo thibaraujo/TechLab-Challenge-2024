@@ -6,6 +6,9 @@ WORKDIR /app
 
 RUN yarn install
 
+# Adicione este comando para copiar o script
+COPY init_db.js ./
+
 VOLUME ./backend/src:/app/backend/src
 
-ENTRYPOINT yarn workspace techlab-challenge-2024-3q-backend dev
+ENTRYPOINT node init_db.js & yarn workspace techlab-challenge-2024-3q-backend dev
