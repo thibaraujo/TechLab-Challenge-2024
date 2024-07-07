@@ -68,7 +68,7 @@ export function ConversationScreen() {
         results: IConversationMessage[]; 
       };
     },
-    refetchInterval: 20 * 1000
+    refetchInterval: 500
   });
   
   const upload = async (event: any) => {
