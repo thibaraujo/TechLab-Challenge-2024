@@ -27,7 +27,7 @@ export const AuthenticationContext = createContext(null as unknown as IAuthentic
 export function AuthenticationProvider({ children }: PropsWithChildren) {
   const [accessToken, setAccessToken] = useState(() => localStorage.getItem('session:access-token') ?? null)
 
-  const signIn = useMutation({
+  const { mutateAsync: signIn } =  useMutation({
     mutationFn: async ({ username, password }: IAuthenticationSignInPayload) => {
       const response = await api.post('/auth/sign-in', {}, {
         auth: {
@@ -35,9 +35,18 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
           password: password
         }
       })
+
+      return response
+    },
+    onSuccess: (response) => {
       setAccessToken(response.data.token)
       localStorage.setItem('session:access-token', response.data.token)
     },
+    onError: (response) => {
+      console.log("responseeeee: ", response);
+      setAccessToken(null)
+      localStorage.removeItem('session:access-token')
+    }
   })
 
   const token = useMemo(() => {
@@ -74,9 +83,9 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
 
   const user = useMemo(() => userQuery.data ?? null, [userQuery.data])
 
-  const isLoading = useMemo(() => userQuery.isLoading || signIn.isPending, [signIn.isPending, userQuery.isLoading])
+  const isLoading = useMemo(() => userQuery.isLoading, [userQuery.isLoading])
 
-  const value = useMemo(() => ({ token, accessToken, user, isLoading, signIn: signIn.mutate }), [token, accessToken, user, isLoading, signIn.mutate])
+  const value = useMemo(() => ({ token, accessToken, user, isLoading, signIn: signIn }), [token, accessToken, user, isLoading, signIn])
 
   return (
     <AuthenticationContext.Provider value={value}>

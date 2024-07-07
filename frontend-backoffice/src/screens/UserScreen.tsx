@@ -17,6 +17,7 @@ export function UserScreen() {
 
   const [statusAlert, setStatusAlert] = useState(-1);
   const [alert, setAlert] = useState(true); 
+  const [errorMessage, setErrorMessage] = useState("");
   
   let navigate = useNavigate();
 
@@ -28,20 +29,25 @@ export function UserScreen() {
   const save = useMutation({
     mutationFn: async (user: Partial<IUser>) => {
       const userPayload = { username: user.username, email: user.email, profile: user.profile } as IUserPayload
-      const response = await api.put(`/users`, userPayload, {
+      await api.put(`/users`, userPayload, {
         headers: { Authorization: `Bearer ${accessToken}` },
         params: {
           id: user._id
         }
+      }).then((response) => {
+        setStatusAlert(response.status);
+        setAlert(true);
+      }).catch((error) => {
+        setStatusAlert(error.response.status);
+        setAlert(true);
+        setErrorMessage(error.response.data.message);
       });
 
-      setStatusAlert(response.status);
-      setAlert(true);
       setTimeout(() => {
         setAlert(false);
       }, 3000);
 
-      if((response.status == 200) && (context.user?.profile == "sudo")) navigate("/users") 
+      if((statusAlert == 200) && (context.user?.profile == "sudo")) navigate("/users") 
     }
   });
 
@@ -116,7 +122,7 @@ export function UserScreen() {
           alert && 
           <Alert severity="error">
             <AlertTitle>Erro</AlertTitle>
-            Não foi possível salvar as alterações.
+            Não foi possível salvar as alterações. Erro: {errorMessage}
           </Alert> : <></>
         }
       </Grid>

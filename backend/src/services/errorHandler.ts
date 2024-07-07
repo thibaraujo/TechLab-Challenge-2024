@@ -63,3 +63,14 @@ export function errorHandler(err: MyHttpError, req: Request, res: Response, next
   res.status(status).json({ success, message, status });
 }
   
+export class CustomError extends Error {
+  status: number;
+  message: string;
+
+  constructor(message: string, statusCode: number, customMessage?: string) {
+    customMessage = customMessage || message;
+    super(message);
+    this.status = statusCode;
+    this.message = customMessage;
+  }
+}

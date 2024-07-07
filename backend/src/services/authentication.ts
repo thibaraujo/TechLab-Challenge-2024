@@ -5,6 +5,7 @@ import { Profile, User } from "../entities/User.js";
 import { AuthUser } from "../interfaces/IAuthUser.js";
 import { UserModel } from "../model/user.js";
 import { CustomRequest } from "../interfaces/ICustomRequest.js";
+import { CustomError } from "./errorHandler.js";
 
 
 const privateKey = process.env.SECRET ? process.env.SECRET : "SECRET_KEY";
@@ -48,7 +49,7 @@ class Authentication {
       if (!token) return res.status(401).send("Token de acesso não fornecido.");
 
       jwt.verify(token, privateKey, (err) => {
-        if (err) return res.status(500).send("Falha ao autenticar o token.");
+        if (err) return res.status(403).send("Falha ao autenticar o token.");
 
         next();
       });
@@ -80,20 +81,20 @@ class Authentication {
         throw "Usuário ou senha inválidos.";
       else user = respUser;
 
-      if (!user.password) throw "Usuário não possui senha.";
+      if (!user.password) throw new CustomError("Usuário não possui senha.", 401);
 
       const hash = await bcrypt.compare(password, user.password);
 
       if (hash) {
-        if (!user._id) throw "Usuário não possui _id.";
+        if (!user._id) throw new CustomError("Usuário não encontrado.", 401);
         await UserModel.updateOne({ _id: user._id }, { $set: { available: true } }, { new: true }	);
         return { ...user, token: this.generateJWT(user as User, ip) };
       }
-      else throw "Senha incorreta.";
+      else throw new CustomError("Usuário ou senha inválidos.", 401);
 
     } catch (err) {
       console.error(err);
-      throw "Erro na autenticação Basic: " + err;
+      throw new CustomError("Erro na autenticação Basic: " + err, 401);
     }
   }
 
@@ -136,7 +137,8 @@ class Authentication {
       next();
     } catch (err) {
       console.error(err);
-      return res.status(401).send({ message: err });
+      // return res.status(401).send({ message: err });
+      next();
     }
   };
 

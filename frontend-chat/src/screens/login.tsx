@@ -11,13 +11,15 @@ import { useForm } from 'react-hook-form'
 
 import { useNavigate } from "react-router-dom";
 import { useAuthenticationContext } from '../hooks/useAuthenticationProvider.js';
+import { Alert, AlertTitle, Grid } from '@mui/material';
+import { useState } from 'react';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://github.com/thibaraujo/TechLab-Challenge-2024">
+        Thiago Batista Araújo - TechLab Challenge
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -28,14 +30,25 @@ function Copyright(props: any) {
 export default function SignIn() {
   let navigate = useNavigate();
 
+  const [alert, setAlert] = useState(false);
+  const [statusAlert, setStatusAlert] = useState(-1);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const routeChange = () =>{ 
     let path = `/conversations`; 
     navigate(path);
   }
 
   const { signIn } = useAuthenticationContext()
-  const handleSubmit = ({ document }: any) => {
-    signIn( document )
+  const handleSubmit = async ({ document }: any) => {
+    try{
+      await signIn( document )
+    } catch (error: any) {
+      console.log("errinhoooo:", error)
+      setAlert(true);
+      setStatusAlert(error.response.status);
+      setErrorMessage(error.response.data);
+    }
   };
 
   const form = useForm()
@@ -89,6 +102,21 @@ export default function SignIn() {
           >
             Ainda não tem uma conta? Cadastre-se
           </Button>
+          <Grid item sm={10}>
+            {statusAlert == 200 ? 
+              alert && 
+              <Alert severity="success">
+                <AlertTitle>Sucesso</AlertTitle>
+                Sucesso.
+              </Alert>
+              : statusAlert != -1 ? 
+              alert && 
+              <Alert severity="error">
+                <AlertTitle>Erro</AlertTitle>
+                {errorMessage}
+              </Alert> : <></>
+            }
+          </Grid>
         </Box>
       </Box>
       <Copyright sx={{ mt: 8, mb: 4 }} />

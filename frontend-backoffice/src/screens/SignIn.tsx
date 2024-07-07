@@ -2,8 +2,6 @@
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -12,13 +10,15 @@ import Container from '@mui/material/Container';
 import { useForm } from 'react-hook-form'
 import { useAuthenticationContext } from '../hooks/useAuthenticationContext.js';
 import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { Alert, AlertTitle, Grid } from '@mui/material';
 
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
+      <Link color="inherit" href="https://github.com/thibaraujo/TechLab-Challenge-2024">
+        Thiago Batista Araújo - TechLab Challenge
       </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
@@ -28,6 +28,10 @@ function Copyright(props: any) {
 
 export default function SignIn() {
 
+  const [alert, setAlert] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [statusAlert, setStatusAlert] = useState(-1);
+
   let navigate = useNavigate(); 
   const routeChange = () =>{ 
     let path = `/users`; 
@@ -35,8 +39,14 @@ export default function SignIn() {
   }
 
   const { signIn } = useAuthenticationContext()
-  const handleSubmit = ({ username, password }: any) => {
-    signIn({ username, password })
+  const handleSubmit = async ({ username, password }: any) => {
+    try {
+      await signIn({ username, password });
+    } catch (error: any) {
+      setAlert(true);
+      setStatusAlert(error.response.status);
+      setErrorMessage(error.response.data.message);
+    }
   };
 
   const form = useForm()
@@ -63,7 +73,7 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
-            label="Username Or Email"
+            label="E-mail"
             name="username"
             autoComplete="username"
             autoFocus
@@ -74,13 +84,9 @@ export default function SignIn() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label="Senha"
             type="password"
             autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
           />
           <Button
             type="submit"
@@ -91,6 +97,21 @@ export default function SignIn() {
           >
             Entrar
           </Button>
+          <Grid item sm={10}>
+            {statusAlert == 200 ? 
+              alert && 
+              <Alert severity="success">
+                <AlertTitle>Sucesso</AlertTitle>
+                Sucesso.
+              </Alert>
+              : statusAlert != -1 ? 
+              alert && 
+              <Alert severity="error">
+                <AlertTitle>Erro</AlertTitle>
+                Erro: {errorMessage}
+              </Alert> : <></>
+            }
+          </Grid>
         </Box>
       </Box>
       <Copyright sx={{ mt: 8, mb: 4 }} />
