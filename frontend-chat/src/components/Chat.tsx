@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { AuthenticationContext } from "../contexts/AuthenticationProvider";
 import { IConversation } from "../interfaces/IConversation";
 import { LoadingButton } from "@mui/lab";
@@ -72,6 +72,12 @@ export function Chat() {
     ...messagesQuery.data?.results ?? []
   ].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()),
   [messagesQuery.data?.results])
+
+  useEffect(() => {
+    if (!scrollRef.current) return
+
+    scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" })
+  }, [messages])
 
   const send = useMutation({
     mutationFn: async (conversationMessageInput: IConversationMessageInput) => {
