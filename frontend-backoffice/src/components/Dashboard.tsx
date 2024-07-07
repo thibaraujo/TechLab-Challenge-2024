@@ -17,7 +17,11 @@ export function Dashboard() {
 
   let navigate = useNavigate();
 
-  const logout = () => {
+  const logout = async () => {
+    await api.patch('/users/available', { available: false}, {
+      headers: { Authorization: `Bearer ${context.accessToken}` }
+    })
+
     localStorage.clear();
     navigate("/");
     location.reload();
