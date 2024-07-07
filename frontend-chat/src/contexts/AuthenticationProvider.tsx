@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useCallback, useMemo, useState } from "react"
+import { createContext, PropsWithChildren, useMemo, useState } from "react"
 import { IConsumer } from "../interfaces/IConsumer"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { decodeJsonWebToken } from "../tools/decodeJsonWebToken"
@@ -52,24 +52,32 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
     enabled: !!consumerId
   })
 
-  const signInMutation = useMutation({
-    mutationFn: (document: string) => api.post('/consumers/sign-in', { document }),
+  const { mutateAsync: signIn } = useMutation({
+    mutationFn: (document: string) => {
+      const response = api.post('/consumers/sign-in', { document });
+      return response;
+    },
     onSuccess: response => {
       const  access_token  = response.data.token;
 
       setAccessToken(access_token)
 
       localStorage.setItem('session:access-token', access_token)
+    }, 
+    onError: (response) => {
+      console.log("responseeeee: ", response);
+      setAccessToken(null)
+      localStorage.removeItem('session:access-token')
     }
   })
 
-  const signIn = useCallback((document: string) => {
-    signInMutation.mutate(document)
-  }, [signInMutation.mutate])
+  // const signIn = useCallback((document: string) => {
+  //   signInMutation.mutate(document)
+  // }, [signInMutation.mutate])
 
   const consumer = (query.data ?? null) as IConsumer | null
 
-  const isLoading = useMemo(() => query.isLoading ?? signInMutation.isPending, [query.isLoading, signInMutation.isPending])
+  const isLoading = useMemo(() => query.isLoading, [query.isLoading])
 
   return (
     <AuthenticationContext.Provider value={{ accessToken, consumer, isLoading, signIn }}>

@@ -12,19 +12,24 @@ import { useAccessToken } from "../hooks/useAuthenticationContext.js";
 export function NewUserScreen() {
   const [statusAlert, setStatusAlert] = useState(-1);
   const [alert, setAlert] = useState(true); 
+  const [errorMessage, setErrorMessage] = useState("");
 
   const accessToken = useAccessToken()
 
   const save = useMutation({
     mutationFn: async (user: Partial<IUser>) => {
-      const response = await api.post(`/users`, user, 
+      await api.post(`/users`, user, 
         { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
+      ).then((response) => {
+        setStatusAlert(response.status);
+        setAlert(true);
+      }).catch((error) => {
+        setStatusAlert(error.response.status);
+        setAlert(true);
+        setErrorMessage(error.response.data.message);
+      });
 
-      setStatusAlert(response.status);
-      setAlert(true);
-
-      if(response.status == 201){
+      if(statusAlert == 201){
         form.resetField("username")
         form.resetField("email")
         form.resetField("password")
@@ -83,7 +88,7 @@ export function NewUserScreen() {
           alert && 
           <Alert severity="error">
             <AlertTitle>Erro</AlertTitle>
-            Não foi possível salvar as alterações.
+            Não foi possível salvar as alterações. Erro: {errorMessage}
           </Alert> : <></>
         }
       </Grid>

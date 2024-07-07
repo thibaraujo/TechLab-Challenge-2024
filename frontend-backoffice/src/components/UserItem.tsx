@@ -33,6 +33,7 @@ export function UserItem({ user }: IUserItemProps) {
   const [open, setOpen] = useState(false);
   const [statusAlert, setStatusAlert] = useState(-1);
   const [alert, setAlert] = useState(true);  
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -45,21 +46,26 @@ export function UserItem({ user }: IUserItemProps) {
   const accessToken = useAccessToken();
 
   const deleteUser = async () => {
-    const response = await api.delete(`/users`, {
+    await api.delete(`/users`, {
       headers: { Authorization: `Bearer ${accessToken}` },
       params: {
         id: user._id
       }
+    }).then((response) => {
+      setStatusAlert(response.status);
+      setAlert(true);
+    }).catch((error) => {
+      setStatusAlert(error.response.status);
+      setAlert(true);
+      setErrorMessage(error.response.data.message);
     });
 
-    setStatusAlert(response.status);
-    setAlert(true);
     setTimeout(() => {
       setAlert(false);
       location.reload();
     }, 1800);
 
-    if(response.status == 200) {
+    if(statusAlert == 200) {
       navigate("/users", {replace: true});
     }
 
@@ -116,7 +122,7 @@ export function UserItem({ user }: IUserItemProps) {
             alert && 
             <Alert severity="error">
               <AlertTitle>Erro</AlertTitle>
-              Erro ao excluir usuário.
+              Erro ao excluir usuário. Erro: {errorMessage}
             </Alert> : <></>
           }
         </Grid>

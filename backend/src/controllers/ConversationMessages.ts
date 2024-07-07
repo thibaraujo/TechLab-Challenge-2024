@@ -31,9 +31,10 @@ export class ConversationMessagesController {
 
     public async create(req: Request, res: Response, next: NextFunction) {
       try {
+        console.log("BODY: ", req.body);
         const conversationMessage = new ConversationMessageModel(req.body as ConversationMessage);
-        await ConversationMessageModel.create(conversationMessage);
-
+        const created = await ConversationMessageModel.create(conversationMessage);
+        console.log("CREATED: ", created);
         return res.status(201).send(conversationMessage);
       } catch (error) {
         console.error("ERRO CRIANDO MENSAGEM: ", error);

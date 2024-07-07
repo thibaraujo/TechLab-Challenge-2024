@@ -18,7 +18,7 @@ export class AuthenticationController {
       return res.status(200).set("Content-Type", "application/json").send(user);
     } catch (error) {
       console.error("ERRO INICIANDO SESSÃO DO USUÁRIO : ", error);
-      return res.status(500).send(error);
+      return res.status(403).send(error);
     }
   }
 
@@ -32,7 +32,7 @@ export class AuthenticationController {
       return res.status(200).set("Content-Type", "application/json").send(consumer);
     } catch (error) {
       console.error("ERRO INICIANDO SESSÃO DO USUÁRIO : ", error);
-      return res.status(500).send(error);
+      return res.status(403).send(error);
     }
   }
 }

@@ -12,18 +12,24 @@ import { useNavigate } from "react-router-dom";
 
 export function RegisterScreen() {
   const [statusAlert, setStatusAlert] = useState(-1);
-  const [alert, setAlert] = useState(true); 
+  const [alert, setAlert] = useState(true);
+  const [errorMessage, setErrorMessage] = useState(""); 
   
   let navigate = useNavigate();
 
   const save = useMutation({
     mutationFn: async (consumer: Partial<IConsumer>) => {
-      const response = await api.post(`/consumers`, consumer);
+      await api.post(`/consumers`, consumer).
+        then((response) => {
+          setStatusAlert(response.status);
+          setAlert(true);
+        }).catch((error) => {
+          setStatusAlert(error.response.status);
+          setAlert(true);
+          setErrorMessage(error.response.data.message);
+        });
 
-      setStatusAlert(response.status);
-      setAlert(true);
-
-      if(response.status == 201) {
+      if(statusAlert == 201) {
         let path = `/`; 
         navigate(path);
       }
@@ -85,13 +91,13 @@ export function RegisterScreen() {
           alert && 
           <Alert severity="success">
             <AlertTitle>Sucesso</AlertTitle>
-            Usuário criado com sucesso.
+            Consumidor criado com sucesso.
           </Alert>
           : statusAlert != -1 ? 
           alert && 
           <Alert severity="error">
             <AlertTitle>Erro</AlertTitle>
-            Não foi possível criar o usuário.
+            Não foi possível registrar. Erro: {errorMessage}
           </Alert> : <></>
         }
       </Grid>

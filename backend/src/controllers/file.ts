@@ -11,6 +11,7 @@ export class FilesController {
     try {
       const { file } = req as any;
       const { user, conversation } = req.query;
+      console.log("user: ", user)
       if (!file) throw "Necessário anexar arquivo.";
       if(!conversation) throw "Necessário informar a conversa.";
     
@@ -27,7 +28,6 @@ export class FilesController {
             content: `Arquivo ${fileName} enviado.`,
             by: user ? ConversationMessageBy.User : ConversationMessageBy.Consumer,
             conversation: conversation,
-            createdAt: new Date(),
             type: ConversationMessageType.FILE,
             fileId: upload._id,
             user: user || null

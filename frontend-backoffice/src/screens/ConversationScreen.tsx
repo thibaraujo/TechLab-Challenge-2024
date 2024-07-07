@@ -1,4 +1,4 @@
-import { Box, Grid, List, ListItem, Skeleton, TextField, Typography } from "@mui/material";
+import { Box, Button, Grid, List, ListItem, Skeleton, styled, TextField, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../services/api.js";
@@ -10,10 +10,25 @@ import { useForm } from "react-hook-form";
 import SendIcon from '@mui/icons-material/Send.js';
 import CloseIcon from '@mui/icons-material/Close.js';
 import { LoadingButton } from "@mui/lab";
+import { CloudUpload } from "@mui/icons-material";
 
 interface IConversationMessageInput {
   content: string
 }
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
+
 
 export function ConversationScreen() {
   const params = useParams()
@@ -56,6 +71,18 @@ export function ConversationScreen() {
     refetchInterval: 20 * 1000
   });
   
+  const upload = async (event: any) => {
+    console.log("aqui: ", event.target.files)
+    console.log("user: ", conversation.data?.user)
+    const file = event.target.files[0];
+    const response = await api.post(`/files`, {file}, {
+      params: { conversation: conversationId, user: conversation.data?.user },
+      headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": 'multipart/form-data' }
+    });
+
+    location.reload();
+    console.log("arquivoooo: ", response)
+  };
 
   const send = useMutation({
     mutationFn: async (conversationMessageInput: IConversationMessageInput) => {
@@ -73,6 +100,25 @@ export function ConversationScreen() {
     onSuccess: () => messagesQuery.refetch()
   });
   
+  const downloadFile = async ( fileId: string ) => {
+  
+    const response = await api.get(`/files`, {
+      params: { file: fileId },
+      headers: { Authorization: `Bearer ${accessToken}`},
+      responseType: 'blob'
+    });
+
+    const href = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = href;
+    link.setAttribute('download', "file.pdf");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(href);
+
+    console.log("arquivoooo: ", response)
+  };
 
   const close = useMutation({
     mutationFn: async () => {
@@ -159,6 +205,9 @@ export function ConversationScreen() {
                 <span style={{ width: 5 }}/>
                 <Typography variant='overline'>{message.by == "system" ? "Mensagem enviada pelo sistema" : " "}</Typography>
                 <Typography variant='overline'>{new Date(message.createdAt).toLocaleString()}</Typography>
+                {message.type == "FILE" && (
+                  <Button variant="contained" onClick={() => downloadFile(message.fileId)}>Download</Button>
+                )}
               </Box>
             </ListItem>
           ))}
@@ -179,6 +228,20 @@ export function ConversationScreen() {
               Fechar
             </LoadingButton>
           </Grid>
+          <Grid item sm={1} mt='auto'>
+              <Button
+                component="label"
+                role={undefined}
+                variant="contained"
+                tabIndex={-1}
+                style={{ padding: 16 }}
+                startIcon={<CloudUpload />}
+                onChange={(e) => upload(e)}
+              >
+                Arquivo
+                <VisuallyHiddenInput type="file" id="file" name="file" accept=".pdf"/>
+              </Button>
+            </Grid>
         </Grid>
       </Box>
     </Box>
