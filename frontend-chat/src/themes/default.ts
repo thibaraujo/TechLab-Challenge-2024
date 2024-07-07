@@ -28,6 +28,15 @@ const darkTheme = createTheme({
             backgroundColor: "#373e4e"
           }
         }
+      },
+      MuiCssBaseline: {
+        styleOverrides: {
+          div: {
+            "&::-webkit-scrollbar": {
+              display: "none"
+            }
+          }
+        }
       }
     }
 })
@@ -65,6 +74,15 @@ const lightTheme = createTheme({
           }
         }
       },
+      MuiCssBaseline: {
+        styleOverrides: {
+          div: {
+            "&::-webkit-scrollbar": {
+              display: "none"
+            }
+          }
+        }
+      }
     }
 })
 
@@ -73,7 +91,7 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     height: 34,
     padding: 7,
     position: 'absolute',
-    right: 5,
+    right: 15,
     top: 10,
     '& .MuiSwitch-switchBase': {
       margin: 1,

@@ -136,13 +136,13 @@ export function ConversationScreen() {
   if (!conversation.data) throw new Error('Failed to load conversation')
 
   return (
-    <Box display='flex' flexDirection='column' height='90vh' py={2} position={"fixed"} width={"60vw"} mt={1}>
+    <Box display='flex' flexDirection='column' height='90vh' py={2} position={"fixed"} width={"70vw"}>
       <Box>
         <Typography variant='h5'>{conversation.data.subject}</Typography>
         {conversation.data.consumer.name && <Typography variant='subtitle1'>{conversation.data.consumer.name}</Typography>}
         <Typography variant='subtitle1'>{conversation.data.consumer.document}</Typography>
       </Box>
-      <Box maxHeight='80%' overflow='hidden' ref={scrollRef}>
+      <Box maxHeight='80%' overflow='hidden scroll' ref={scrollRef}>
         <List style={{maxWidth: "99%"}}>
           {messages.map((message) => (
             <ListItem key={`messages:${message.id}`} style={{
@@ -169,14 +169,14 @@ export function ConversationScreen() {
           <Grid item sm={9}>
             <TextField {...form.register('content')} multiline fullWidth onSubmit={submit} onKeyUp={handleKeyPress}/>
           </Grid>
-          <Grid item sm={1} mt='auto' mr={6}>
+          <Grid item sm={1} mt='auto' mr={4}>
             <LoadingButton loading={send.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SendIcon />} onClick={submit}>
               Enviar
             </LoadingButton>
           </Grid>
           <Grid item sm={1} mt='auto'>
             <LoadingButton loading={close.isPending} variant="contained" style={{ padding: 16 }} startIcon={<CloseIcon />} onClick={() => close.mutate()}>
-              Encerrar
+              Fechar
             </LoadingButton>
           </Grid>
         </Grid>
