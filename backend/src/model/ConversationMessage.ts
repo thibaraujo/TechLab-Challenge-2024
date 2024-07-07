@@ -30,7 +30,15 @@ const ConversationMessageSchema = new Schema({
         type: Date,
         default: new Date(),
         immutable: true
-    }
+    },
+    type: {
+        type: String,
+        required: true
+    },
+    fileId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false
+    },
 });
 
 export const ConversationMessageModel = model<IConversationMessage>("ConversationMessage", ConversationMessageSchema);

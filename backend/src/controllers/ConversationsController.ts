@@ -52,7 +52,7 @@ export class ConversationsController {
 
     public async findOne(req: Request, res: Response, next: NextFunction) {
       try {
-        const conversation = await ConversationModel.findOne({_id: req.params.id, deletedAt: null}).exec();
+        const conversation = await ConversationModel.findOne({ _id: req.params.id }).exec();
         if (!conversation) return res.status(404).send({ message: `Conversa não encontrada: ${req.query.id}` });
         return res.status(200).send(conversation);
       } catch (error) {
