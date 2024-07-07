@@ -64,7 +64,8 @@ export function ConversationScreen() {
         {
           by: 'user',
           conversation: conversationId,
-          content: conversationMessageInput.content
+          content: conversationMessageInput.content,
+          type: "TEXT"
         },
         { headers: { Authorization: `Bearer ${accessToken}` } }
       );
@@ -82,8 +83,10 @@ export function ConversationScreen() {
     },
     onSuccess: () => {
       messagesQuery.refetch();
-      navigate(-1); 
-      window.location.reload();
+      let path = location.href;
+      if(path.includes("my_conversations")) navigate("/my_conversations");
+      else navigate("/conversations");
+      location.reload();
     }
   });
   
@@ -130,7 +133,7 @@ export function ConversationScreen() {
     <Skeleton variant="rounded" width={210} height={60} />
   )
 
-  if (!conversation.data) throw new Error('Failed to laod conversation')
+  if (!conversation.data) throw new Error('Failed to load conversation')
 
   return (
     <Box display='flex' flexDirection='column' height='90vh' py={2} position={"fixed"} width={"70vw"}>
@@ -168,12 +171,12 @@ export function ConversationScreen() {
           </Grid>
           <Grid item sm={1} mt='auto' mr={2}>
             <LoadingButton loading={send.isPending} variant="contained" style={{ padding: 16 }} startIcon={<SendIcon />} onClick={submit}>
-              Send
+              Enviar
             </LoadingButton>
           </Grid>
           <Grid item sm={1} mt='auto'>
             <LoadingButton loading={close.isPending} variant="contained" style={{ padding: 16 }} startIcon={<CloseIcon />} onClick={() => close.mutate()}>
-              Close
+              Fechar
             </LoadingButton>
           </Grid>
         </Grid>

@@ -1,7 +1,7 @@
 "use strict";
 
 import { celebrate, Segments, Joi } from "celebrate";
-import { ConversationMessageBy } from "../entities/ConversationMessage.js";
+import { ConversationMessageBy, ConversationMessageType } from "../entities/ConversationMessage.js";
 import { customMessages } from "../services/errorHandler.js";
 
 export default {
@@ -20,7 +20,7 @@ export default {
                 by: Joi.string().valid(...Object.values(ConversationMessageBy)).required(),
                 conversation: Joi.string().length(24).hex().required(),
                 user: Joi.string().length(24).hex(),
-                type: Joi.string().valid(...Object.values(ConversationMessageBy)).required(),
+                type: Joi.string().valid(...Object.values(ConversationMessageType)).required(),
                 fileId: Joi.string().length(24).hex(),
             },
         }, { messages: customMessages });
@@ -33,7 +33,7 @@ export default {
             },
             [Segments.BODY]: {
                 content: Joi.string(),
-                by: Joi.string().valid(...Object.values(ConversationMessageBy)),
+                by: Joi.string().valid(...Object.values(ConversationMessageType)),
                 conversation: Joi.string().length(24).hex(),
                 user: Joi.string().length(24).hex(),
             },
