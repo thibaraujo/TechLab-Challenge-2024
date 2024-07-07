@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useMemo, useRef, useState } from "r
 import { AuthenticationContext } from "../contexts/AuthenticationProvider";
 import { IConversation } from "../interfaces/IConversation";
 import { LoadingButton } from "@mui/lab";
-import { Box, Typography, List, ListItem, Grid, TextField, Button, styled, Alert, AlertTitle } from "@mui/material";
+import { Box, Typography, List, ListItem, Grid, TextField, Button, styled } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../services/api";
 import { IConversationMessage } from "../interfaces/IConversationMessage";
@@ -27,7 +27,6 @@ export function Chat() {
   const params = useParams()
   const conversationId = params.conversationId
   const [showSendMessage, setShowSendMessage] = useState(false);
-  const [alert, setAlert] = useState(false);
 
   const {accessToken } = useContext(AuthenticationContext);
 
@@ -43,7 +42,7 @@ export function Chat() {
     width: 1,
   });
 
-  const showMessageQuery = useQuery({
+  useQuery({
     queryKey: ['conversations', conversationId],
     queryFn: async () => {
       console.log("dentro do conversation: " , accessToken)
@@ -52,7 +51,6 @@ export function Chat() {
       })
 
       response.data.deletedAt? setShowSendMessage(false) : setShowSendMessage(true);
-      response.data.deletedAt? setAlert(true) : setAlert(false);
 
       return response.data as IConversation
     }
@@ -75,7 +73,7 @@ export function Chat() {
         results: IConversationMessage[]; 
       };
     },
-    refetchInterval: 500
+    refetchInterval: 20*1000
   });
   
 
@@ -134,23 +132,12 @@ export function Chat() {
     defaultValues: { content: '' },
   })
 
-  const showMessageQueryAsync = async (message: any) => {
-    await showMessageQuery.refetch();
-
-    if(showSendMessage) send.mutate(message)
-    if(alert) {
-      setTimeout(() => {
-        setAlert(!alert);
-      }, 1800);
-    }
-  }
-
   const handleSubmit = useCallback((message: IConversationMessageInput) => {
     message.content = message.content?.trim()
 
     if (!message.content) return;
-    showMessageQueryAsync(message);
     form.reset();
+    send.mutate(message)
         
   }, [send.mutate, form])
 
@@ -210,13 +197,6 @@ export function Chat() {
             </ListItem>
             
           ))}
-          <Grid item sm={10} style={{maxWidth: "75%", width: "fit-content",marginLeft: "auto", marginRight: 0}}>
-            {alert && <Alert severity="error">
-                <AlertTitle>Conversa finalizada</AlertTitle>
-                Não é possível enviar novas mensagens
-              </Alert>
-            }
-          </Grid>
         </List>
       </Box>
       {showSendMessage && (
