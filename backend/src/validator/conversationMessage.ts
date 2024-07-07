@@ -20,6 +20,8 @@ export default {
                 by: Joi.string().valid(...Object.values(ConversationMessageBy)).required(),
                 conversation: Joi.string().length(24).hex().required(),
                 user: Joi.string().length(24).hex(),
+                type: Joi.string().valid(...Object.values(ConversationMessageBy)).required(),
+                fileId: Joi.string().length(24).hex(),
             },
         }, { messages: customMessages });
     },

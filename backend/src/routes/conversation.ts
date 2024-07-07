@@ -56,7 +56,6 @@ router.get(URL + "/consumers",
 router.get(URL + "/:id",
   validator.get(),
   celebrateErrorHandler,
-  authentication.standardMiddleware,
   _catch((req, res, next) => {
     singleton(ConversationsController).findOne(req, res, next).catch(next)
   })
