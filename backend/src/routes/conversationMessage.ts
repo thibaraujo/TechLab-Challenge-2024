@@ -26,26 +26,4 @@ router.get(URL,
   })
 );
 
-// // update conversationMessage
-// router.put(URL,
-//   _catch((req, res, next) => {
-//     singleton(ConversationMessagesController).update(req, res, next).catch(next)
-//   })
-// );
-
-// // get conversationMessage
-// router.get(URL + "/:id",
-//   _catch((req, res, next) => {
-//     singleton(ConversationMessagesController).findOne(req, res, next).catch(next)
-//   })
-// );
-
-// // delete conversationMessage
-// router.delete(URL,
-//   _catch((req, res, next) => {
-//     singleton(ConversationMessagesController).delete(req, res, next).catch(next)
-//   })
-// );
-
-
 export default router

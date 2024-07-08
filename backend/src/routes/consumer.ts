@@ -25,30 +25,6 @@ router.post(URL,
   })
 );
 
-// router.post(URL + "/register",
-//   _catch((req, res, next) => {
-//     singleton(ConsumersController).register(req, res, next).catch(next)
-//   })
-// );
-
-// router.put(URL,
-//   _catch((req, res, next) => {
-//     singleton(ConsumersController).update(req, res, next).catch(next)
-//   })
-// );
-
-// router.patch(URL,
-//   _catch((req, res, next) => {
-//     singleton(ConsumersController).patch(req, res, next).catch(next)
-//   })
-// );
-
-// router.get(URL, 
-//   _catch((req, res, next) => {
-//     singleton(ConsumersController).find(req, res, next).catch(next)
-//   })
-// );
-
 router.get(URL + "/:id",
   validator.get(),
   authenticationConsumer.consumerMiddleware,
@@ -56,12 +32,6 @@ router.get(URL + "/:id",
     singleton(ConsumersController).findOne(req, res, next).catch(next)
   })
 );
-
-// router.delete(URL,
-//   _catch((req, res, next) => {
-//     singleton(ConsumersController).delete(req, res, next).catch(next)
-//   })
-// );
 
 
 export default router

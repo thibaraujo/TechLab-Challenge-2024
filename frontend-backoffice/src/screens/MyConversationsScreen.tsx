@@ -16,8 +16,6 @@ export function MyConversationsScreen() {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
 
-      console.log(response)
-
       return response.data as {
         total: number
         results: IConversation[]

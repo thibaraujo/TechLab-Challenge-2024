@@ -57,7 +57,6 @@ class AuthenticationConsumer {
         throw "Consumidor não encontrado.";
       else consumer = respConsumer;
 
-      console.log(consumer);
       return { ...consumer, token: this.generateJWTConsumer(consumer as Consumer, "") };
     } catch (err) {
       console.error(err);

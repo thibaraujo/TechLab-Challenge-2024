@@ -11,8 +11,6 @@ import { AuthenticationContext } from "../contexts/AuthenticationProvider.js";
 
 
 export function HistoryConversationsScreen() {
-  // const user = useAuthenticatedUser()
-
   const { consumer, accessToken } = useContext(AuthenticationContext);
 
   const [subject, setSubject] = useState("");

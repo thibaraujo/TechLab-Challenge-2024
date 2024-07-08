@@ -25,17 +25,7 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
 
     if (typeof token === 'string') return { token: null, consumerId: null }
 
-    // if (!token.sub) return { token: null, consumerId: null }
-    
-    // if (typeof token.sub !== 'string') return { token: null, consumerId: null }
-
-    // if (!token.sub.startsWith('consumer:')) return { token: null, consumerId: null }
-
-    // const consumerId = token.sub.replace('consumer:', '')
-
     const consumerId = token.consumer;
-    console.log('consumerId', consumerId)
-    console.log({token, consumerId})
 
     return { token, consumerId }
   }, [accessToken])
@@ -64,16 +54,11 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
 
       localStorage.setItem('session:access-token', access_token)
     }, 
-    onError: (response) => {
-      console.log("responseeeee: ", response);
+    onError: () => {
       setAccessToken(null)
       localStorage.removeItem('session:access-token')
     }
   })
-
-  // const signIn = useCallback((document: string) => {
-  //   signInMutation.mutate(document)
-  // }, [signInMutation.mutate])
 
   const consumer = (query.data ?? null) as IConsumer | null
 

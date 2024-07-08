@@ -11,7 +11,7 @@ export class FilesController {
     try {
       const { file } = req as any;
       const { user, conversation } = req.query;
-      console.log("user: ", user)
+
       if (!file) throw "Necessário anexar arquivo.";
       if(!conversation) throw "Necessário informar a conversa.";
     

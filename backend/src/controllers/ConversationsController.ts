@@ -76,7 +76,6 @@ export class ConversationsController {
 
     public async delete(req: Request, res: Response, next: NextFunction) {
       try {
-        console.log(req.query.id);
         const conversation = await ConversationModel.findOne({_id: new mongoose.Types.ObjectId(req.query.id?.toString()), deletedAt: null}).exec();
         if (!conversation) return res.status(404).send({ message: `Conversa não encontrada: ${req.query.id}` });
         conversation.deletedAt = new Date();
@@ -88,49 +87,10 @@ export class ConversationsController {
       }
     }
 
-    // public async distribute(req: Request, res: Response, next: NextFunction) {
-    //   try {
-    //     const totalUsers = await UserModel.find({ deletedAt: null }).lean().exec();
-    //     const usersInfo = await Promise.all(totalUsers.map(async (user) => {
-    //       const userConversations = await ConversationModel.find({ user: user._id, deletedAt: null }).lean().exec();
-    //       const userConversationsCount = userConversations.length;
-
-    //       return { user, userConversationsCount };
-    //     })); 
-
-    //     const usersInfoSorted = usersInfo.sort((a, b) => a.userConversationsCount - b.userConversationsCount);
-    //     const userToDistribute = usersInfoSorted[0].user;
-
-    //     return res.status(200).send(userToDistribute);
-    //   } catch (error) {
-    //     console.error("ERRO DISTRIBUINDO CONVERSAS: ", error);
-    //     return next(error);
-    //   }
-    // }
-
-    // public async distribute(req: Request, res: Response, next: NextFunction) {
-    //   try {
-    //     const totalConversations = await ConversationModel.find({ deletedAt: null, user: null }).lean().exec();
-    //     const totalUsers = await UserModel.find({ deletedAt: null }).lean().exec();
-
-    //     for(let i = 0; i < totalConversations.length; i++) {
-    //       const conversation = totalConversations[i];
-    //       const userToDistribute = totalUsers[i % totalUsers.length];
-    //       await ConversationModel.updateOne({ _id: conversation._id }, { $set: { user: userToDistribute._id } }).exec();
-    //     }
-
-    //   } catch (error) {
-    //     console.error("ERRO DISTRIBUINDO CONVERSAS: ", error);
-    //     return next(error);
-    //   }
-    // }
-
     public async distribute(req: Request, res: Response, next: NextFunction) {
       try {
         const totalConversations = await ConversationModel.find({ deletedAt: null, user: null }).lean().exec();
         const totalUsers = await UserModel.find({ deletedAt: null, available: true }).lean().exec();
-
-        console.log(totalConversations.length, totalUsers.length);
         
         const bulkUpdates = totalConversations.map((conversation, i) => {
           const userToDistribute = totalUsers[i % totalUsers.length];
