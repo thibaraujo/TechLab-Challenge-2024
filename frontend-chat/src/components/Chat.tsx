@@ -45,7 +45,6 @@ export function Chat() {
   useQuery({
     queryKey: ['conversations', conversationId],
     queryFn: async () => {
-      console.log("dentro do conversation: " , accessToken)
       const response = await api.get(`/conversations/${conversationId}`, {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
@@ -65,11 +64,10 @@ export function Chat() {
           id: conversationId
         }
       });
-  
-      console.log(response);
+
   
       return response.data as {
-        total: number; // todo: alterar aqui
+        total: number;
         results: IConversationMessage[]; 
       };
     },
@@ -100,8 +98,6 @@ export function Chat() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
-
-    console.log("arquivoooo: ", response)
   };
 
   useEffect(() => {
@@ -112,8 +108,6 @@ export function Chat() {
 
   const send = useMutation({
     mutationFn: async (conversationMessageInput: IConversationMessageInput) => {
-
-      console.log('bearer', accessToken)
       await api.post(
         `/conversationMessages`,
         {
@@ -154,15 +148,13 @@ export function Chat() {
   }, [submit])
 
   const upload = async (event: any) => {
-    console.log("aqui: ", event.target.files)
     const file = event.target.files[0];
-    const response = await api.post(`/files`, {file}, {
+    await api.post(`/files`, {file}, {
       params: { conversation: conversationId },
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": 'multipart/form-data' }
     });
 
     location.reload();
-    console.log("arquivoooo: ", response)
   };
 
   return (

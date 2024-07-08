@@ -19,8 +19,7 @@ export class Conversation {
   user?: mongoose.Types.ObjectId | IUser | User;
   createdAt: Date;
   deletedAt?: Date;
-  // todo: ver se há necessidade de relação dupla com ConversationMessage, por hora, relação sempre será na entidade de menor cardinalidade
-
+  
   constructor(conversation: IConversation) {
     this._id = conversation._id || new mongoose.Types.ObjectId();
     this.subject = conversation.subject;

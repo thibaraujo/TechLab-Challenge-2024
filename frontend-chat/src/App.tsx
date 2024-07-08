@@ -18,7 +18,6 @@ export function App() {
 
   const handleTheme = () => {
     setLight(!light);
-    console.log("novo tema: ", light.toString());
     localStorage.setItem("theme", light.toString());
   };
 

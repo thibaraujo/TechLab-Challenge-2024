@@ -44,7 +44,6 @@ export default function SignIn() {
     try{
       await signIn( document )
     } catch (error: any) {
-      console.log("errinhoooo:", error)
       setAlert(true);
       setStatusAlert(error.response.status);
       setErrorMessage(error.response.data);

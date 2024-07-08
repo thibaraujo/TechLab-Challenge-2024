@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 import { AuthenticationContext } from "../contexts/AuthenticationContext.js";
 
 export function useAuthenticationContext() {
@@ -10,34 +10,11 @@ export function useAuthenticatedUser() {
 
   if (!user) throw new Error('User not authenticated')
 
-    console.log(user)
-
   return user
-}
-
-export function useHasScope(...oneOfScopes: [string, ...string[]]) {
-  const { token } = useAuthenticationContext()
-
-  if (!token) throw new Error('Token not found')
-
-  return useMemo(() => {
-    /*
-    if (token.scopes.includes('*')) return true
-
-    for (const scope of oneOfScopes)
-      if (token.scopes.includes(scope))
-        return true
-    */
-
-    return true
-
-    // I know what I'm doing, okay?
-  }, [token, ...oneOfScopes])
 }
 
 export function useAccessToken() {
   const { accessToken } = useAuthenticationContext()
-  console.log(accessToken)
 
   if (!accessToken) throw new Error('Access token not found')
 

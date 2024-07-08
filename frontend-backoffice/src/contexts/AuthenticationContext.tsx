@@ -42,8 +42,7 @@ export function AuthenticationProvider({ children }: PropsWithChildren) {
       setAccessToken(response.data.token)
       localStorage.setItem('session:access-token', response.data.token)
     },
-    onError: (response) => {
-      console.log("responseeeee: ", response);
+    onError: () => {
       setAccessToken(null)
       localStorage.removeItem('session:access-token')
     }

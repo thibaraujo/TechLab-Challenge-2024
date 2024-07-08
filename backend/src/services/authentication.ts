@@ -137,7 +137,6 @@ class Authentication {
       next();
     } catch (err) {
       console.error(err);
-      // return res.status(401).send({ message: err });
       next();
     }
   };

@@ -26,12 +26,6 @@ router.post(URL,
   })
 );
 
-// router.post(URL + "/register",
-//   _catch((req, res, next) => {
-//     singleton(UsersController).register(req, res, next).catch(next)
-//   })
-// );
-
 router.put(URL,
   validator.put(),
   celebrateErrorHandler,

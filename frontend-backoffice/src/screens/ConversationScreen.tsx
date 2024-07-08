@@ -61,10 +61,8 @@ export function ConversationScreen() {
         }
       });
   
-      console.log(response);
-  
       return response.data as {
-        total: number; // todo: alterar aqui
+        total: number; 
         results: IConversationMessage[]; 
       };
     },
@@ -72,16 +70,13 @@ export function ConversationScreen() {
   });
   
   const upload = async (event: any) => {
-    console.log("aqui: ", event.target.files)
-    console.log("user: ", conversation.data?.user)
     const file = event.target.files[0];
-    const response = await api.post(`/files`, {file}, {
+    await api.post(`/files`, {file}, {
       params: { conversation: conversationId, user: conversation.data?.user },
       headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": 'multipart/form-data' }
     });
 
     location.reload();
-    console.log("arquivoooo: ", response)
   };
 
   const send = useMutation({
@@ -117,7 +112,6 @@ export function ConversationScreen() {
     document.body.removeChild(link);
     URL.revokeObjectURL(href);
 
-    console.log("arquivoooo: ", response)
   };
 
   const close = useMutation({

@@ -10,7 +10,6 @@ import LocalShipping from '@mui/icons-material/LocalShipping'
 import { useState } from "react";
 
 export function ConversationsScreen() {
-  // const user = useAuthenticatedUser()
   const accessToken = useAccessToken();
 
   const [statusAlert, setStatusAlert] = useState(-1);
@@ -22,8 +21,6 @@ export function ConversationsScreen() {
       const response = await api.get('/conversations', {
         headers: { Authorization: `Bearer ${accessToken}` }
       })
-
-      console.log(response)
 
       return response.data as {
         total: number
@@ -46,10 +43,6 @@ export function ConversationsScreen() {
     }, 1800);
 
   };
-
-  // const count = useMemo(() => {
-  //   return query.data?.count ?? NaN
-  // }, [query.data?.count])
 
   const conversations = query.data?.results ?? null
 
