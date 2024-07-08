@@ -4,6 +4,19 @@ Abaixo encontra-se algumas especificações e demonstrações do resultado final
 Deixo um agradecimento pela oportunidade e pela inciativa de incentivar eventos como esse na comunidade universitária. Com certeza todo processo foi muito enriquecedor.
 - Para demonstrar as funcionalidades da minha aplicação, foi gravado um vídeo de exibição: <https://youtu.be/yZmkqdATdm4>
 
+## Como rodar o projeto
+  - Clonar o repositório e certificar que seu docker possui a imagem do mongo
+  - As variáveis de ambiente já estão definidas na raiz do projeto
+  - Usar o comando: docker-compose up --force-recreate --build (ou docker-compose up -d) na raiz do seu projeto
+  - Acessar pelo seu navegador: localhost:8081 (painel atendente) e localhost:8082 (painel consumidor)
+### Guia para testes
+  - O arquivo db_init.js presente em /backend é responsável por criar no início 02 usuários no banco, um sudo e um standard.
+  - User sudo -> email: sudo@email.com; senha: sudo
+  - User standard -> email: standard@email.com; senha: standard
+  - Inicialmente, conversas, consumidores e mensagens são zeradas, acesse o painel 8082 para criar um consumer e iniciar uma nova conversa
+  - No painel do atendente, usuário sudo possui mais funcionalidades
+  - Se necessário, utilize o vídeo de exibição para auxílio nos testes das funcionalidades (<https://www.youtube.com/watch?v=yZmkqdATdm4>)
+
 ## Alterações mais significativas
 ### Substituição do PostgreSQL pelo MongoDB
   - Motivação: o mongoDB traz nativamente a possibilidade de armazenamento e recuperação de arquivos, o que vai de encontro com algumas propostas do chat: envio de arquivos, fotos, vídeos, etc. Nesse contexto de aplicação, o mongo torna-se interessante por eliminar a necessidade de armazenar essas informações em algum provedor externo. Dentre as soluções desenvolvidas, é possível armazenar e recuperar arquivos pdfs.
@@ -48,11 +61,6 @@ Deixo um agradecimento pela oportunidade e pela inciativa de incentivar eventos 
   - Criação de nova conta na aplicação do consumidor
   - Banners de alertas de sucesso ou erro nas requisições
   - Ocultamento de componentes de acordo com o perfil do atendente
-    
-## Como rodar o projeto
-  - clonar o repositório e certificar que seu docker possui a imagem do mongo
-  - Usar o comando: docker-compose up -d na raiz do seu projeto
-  - Acessar pelo seu navegador: localhost:8081 (painel atendente) e localhost:8082 (painel consumidor)
 
 ## Links úteis
 - https://mongoosejs.com/
